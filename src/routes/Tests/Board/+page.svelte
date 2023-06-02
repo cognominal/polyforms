@@ -18,9 +18,6 @@
 <!-- <PiecesBoard></PiecesBoard> -->
 </div>
 <hr/> 
-<!-- <div class="container" style="height:{boardSize}px;">
-<Grid w={8} h={8} squareSize={8} matrix={tile} active={true} />
-</div> -->
 <style>
 .container {
     position: relative;

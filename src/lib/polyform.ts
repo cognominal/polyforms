@@ -442,8 +442,6 @@ export function tileToString(o: Tile, opts?: { tileNm?: string, onelineMode?: bo
     o.forEach(row => {
         row.forEach(col => {
             s += col === 0 ? ' ' : opts && opts.tileNm
-            // console.log('col', col, 's', s);
-
         })
         s = s.trimEnd()
         s += opts && opts.onelineMode ? '\\n' : '\n'
@@ -510,9 +508,7 @@ export function solutionToString(pboard: PBoard): string {
         })
         charCode++
     })
-    // console.log('rows cols: ', rows, cols);
     printedBoard.map(
-        // row =>  s += '|' + row.join('') + '|\n'
         row => s += row.join('') + '\n'
     )
     return s //+ '\n'
@@ -521,7 +517,6 @@ export function solutionToString(pboard: PBoard): string {
 
 function solve(pboard: PBoard): PBoard[] {
     const solutions: PBoard[] = []
-    // const laidTiles: laidTile[] = []
     const board = pboard.board
     let pos = { x: 0, y: 0 }
     if (board[pos.y][pos.x] !== 0) {
@@ -532,44 +527,15 @@ function solve(pboard: PBoard): PBoard[] {
     return solutions
 }
 
-// function* _recSolve(pboard: PBoard, pos: Pos, solutions: PBoard[]): Generator<PBoard> {
-//     const board = pboard.board
-//     let idx: OrientIdx | null = { tileI: 0, orientI: 0 }
-//     while (idx !== null) {
-//         const tileinfo = pboard.tilesInfo[idx.tileI]
-//         const orient = tileinfo.orients[idx.orientI]
-//         if (pboard.tilesLeft[idx.tileI] && isTilePlaceable(board, orient, pos)) {
-//             placeTile(pboard, pos, idx)
-//             const nextPos = nextFreeSquare(board, pos)
-//             if (nextPos === null) {
-//                 yield pboard
-//             } else {
-//                 recSolve(pboard, nextPos, solutions, 0)
-//             }
-//             rmTile(pboard, pos, idx)
-//         }
-//         idx = nextOrient(pboard, idx)
-//     }
-// }
-
-// let i = 0
-
 function recSolve(pboard: PBoard, pos: Pos, solutions: PBoard[], recLevel: Int): void {
     const board = pboard.board
     let idx: OrientIdx | null = { tileI: 0, orientI: 0 }
     while (idx !== null) {
         const tileinfo = pboard.tilesInfo[idx.tileI]
         const orient = tileinfo.orients[idx.orientI]
-        // console.log('recSolve', recLevel, orient.firstX, idx.tileI, idx.orientI, pos, pboard.tilesLeft[idx.tileI], isTilePlaceable(board, orient, pos))
-        // console.log(tileToString(orient.matrix) + '\n');
-
         if (pboard.tilesLeft[idx.tileI] && isTilePlaceable(board, orient, pos)) {
             const nextPos = placeTile(pboard, pos, idx)
-            // if (recLevel > 8)
-            // i++
-            // console.log(`candidate ${i} ${recLevel}\n` + solutionToString(pboard));
             if (nextPos === null) {
-                // console.log('solution\n' + solutionToString(pboard))
                 solutions.push(_.cloneDeep(pboard))
 
             } else {
@@ -668,7 +634,6 @@ function rmTile(pboard: PBoard, pos: Pos, idx: OrientIdx): Pos {
     matrixMap(orient.matrix, (_, x, y) => {
         if (orient.matrix[y][x] !== 0) {
             pboard.board[y + pos.y][x + pos.x - orient.firstX] = 0
-            // console.log(`rmTile: ${x}, ${y}`);
         }
     })
     pboard.laidTiles.pop()
@@ -766,8 +731,9 @@ export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: Pos|P
 
 // callulate the perimeter of connex component
 // if `firstSquare` is given, it is supposed a square Pos of a connex component
-// or the connex componebt Pos[]
-// if not, we walk the board to find an occuptied square
+// or the connex component Pos[]
+// if not, we walk the board to find an occuptied square 
+// does not handle tiles with holes
 export function calcPerimeter(tile: Tile, firstSquare?: Pos| Pos[]): Pos[] {
     const tileSize = tile.length
 
@@ -813,10 +779,7 @@ export function calcPerimeter(tile: Tile, firstSquare?: Pos| Pos[]): Pos[] {
         } else {
             plPos = { x: plPos.x + walk[(direction) % 4].x, y: plPos.y + walk[(direction) % 4].y, direction: direction }
         }
-        console.log('pushCoords', plPos.x, plPos.y, plPos.direction)
         svgPolyline.push(plPos);
-        // DOMupdatePolyline()
-        // the polyline direction is right orthogonal to the direction
     }
     if (!firstSquare) {
         loop:
@@ -832,8 +795,6 @@ export function calcPerimeter(tile: Tile, firstSquare?: Pos| Pos[]): Pos[] {
     } else {
         pos = firstSquarePos
     }
-    console.log('firstSquarePos', firstSquarePos?.x, firstSquarePos?.y)
-    console.log(tile[firstSquarePos.y][firstSquarePos.x])
     firstSquareDirection = Direction.Right
     pushCoords(true)  // init
 

@@ -23,14 +23,8 @@
 		let nm = _.cloneDeep(matrix)
 		const [x, y] = target.id.split('-').map((s) => parseInt(s))
 		matrix[y][x] = matrix[y][x] == 0 ? 1 : 0
-		// target.setAttribute('class', gridrectClass(y, x));
 		console.log("click", x, y, matrix[y][x], gridrectClass(matrix, y, x))
-		// some logic TBD to refuse a click if it breaks the connexity
-		// matrix = _.cloneDeep(nm)
 		matrix = matrix
-		// connexParts_ = connexParts(matrix, occupiedCell)
-		console.log(connexParts_.length)
-		// console.log(matrix)
     }
     function handleKey(evt:KeyboardEvent) {
         
