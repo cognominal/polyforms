@@ -1,7 +1,8 @@
 <script lang="ts">
-	import {} from '$lib/polyform';
-	import type { Int, Tile, Matrix } from '$lib/polyform';
+	import { connexParts, occupiedCell, perimeterPolylinePoints, dcolors } from '$lib/polyform';
+	import type { Int, Pos, Tile, Matrix } from '$lib/polyform';
 	import _ from 'lodash'
+	import { toSafeInteger } from 'lodash';
 	// import log from 'console';
 	export let w: Int;
 	export let h: Int;
@@ -10,19 +11,32 @@
 	export let active: boolean;
 	const cw = w * squareSize;
 	const ch = h * squareSize;
-	function gridrectClass(y: number, x: number): string {
+	let connexParts_ : Pos[][] = []
+	$: connexParts_ = connexParts(matrix, occupiedCell)
+
+	function gridrectClass(matrix : Int[][], y: number, x: number): string {
 		return matrix[y][x] == 0 ? 'gridrect-free' : 'gridrect-occupied';
 	}
 
     function handleClick(evt: MouseEvent) {
             let target = evt.target as SVGElement
-        console.log(target.id)
 		let nm = _.cloneDeep(matrix)
+		const [x, y] = target.id.split('-').map((s) => parseInt(s))
+		matrix[y][x] = matrix[y][x] == 0 ? 1 : 0
+		// target.setAttribute('class', gridrectClass(y, x));
+		console.log("click", x, y, matrix[y][x], gridrectClass(matrix, y, x))
+		// some logic TBD to refuse a click if it breaks the connexity
+		// matrix = _.cloneDeep(nm)
+		matrix = matrix
+		// connexParts_ = connexParts(matrix, occupiedCell)
+		console.log(connexParts_.length)
+		// console.log(matrix)
     }
     function handleKey(evt:KeyboardEvent) {
         
     }
 </script>
+
 
 <!-- <span class="contained"> -->
 	<span class="contained" on:click={handleClick} on:keypress={handleKey}>
@@ -41,11 +55,17 @@
 					width={squareSize}
 					height={squareSize}
 					id="{x}-{y}"
-					class={gridrectClass(y, x)}
+					class="{gridrectClass(matrix, y, x)}"					
 				/>
 			{/each}
 		{/each}
+		{#each connexParts_ as part, i}
+		<polyline points={perimeterPolylinePoints(matrix, squareSize, part)} 
+		style="fill:{dcolors[i]};stroke:black;stroke-width:1" 
+		class="pentamino draggable" />
+		{/each}
 	</svg>
+	
 </span>
 
 <style>

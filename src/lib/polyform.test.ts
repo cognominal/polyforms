@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { connexParts, occupiedCell, polyominoFloodFillWalk, isWithinMatrix } from './polyform';
+import { connexParts, occupiedCell, polyominoFloodFillWalk, isWithinMatrix, calcPerimeter } from './polyform';
 describe('sanity', () => {
 	it('sanity', () => {
 		expect(true).toBe(true);
@@ -29,4 +29,11 @@ describe('connexity', () => {
         expect(connexParts(matrix, occupiedCell, polyominoFloodFillWalk)).toStrictEqual(expected)
 
     })
+    it('perimeter of a connex part', () => {
+        const matrix = [[0, 1, 1], [1, 0, 0], [0, 1, 1]]
+        const connexParts_ = connexParts(matrix, occupiedCell, polyominoFloodFillWalk)
+        const perimeter = calcPerimeter(matrix, connexParts_[0])
+        console.log(perimeter)
+        
+    });
 })

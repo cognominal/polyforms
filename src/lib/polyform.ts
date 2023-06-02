@@ -31,12 +31,12 @@ type Orient = { matrix: Int[][], firstX: Int }
 // type FTile = [Pos]
 
 //   pboard being a PBoard  an orientation is accessed as pboard.tileInfos[tileI].orients[orientI]
-type OrientIdx = {  tileI: Int;  orientI: Int }
+type OrientIdx = { tileI: Int; orientI: Int }
 // A laid title has a position and an orientation 
-type laidTile = {   pos: Pos;   idx: OrientIdx }
+type laidTile = { pos: Pos; idx: OrientIdx }
 // A tile has a name and a list of orients
 // As instances are laid, `instancesLeft` is decremented
-export type TileInfo = { orients: Orient[];   name?: string }
+export type TileInfo = { orients: Orient[]; name?: string }
 
 
 // A problem board or `PBoard` is self contained and represents a problem to solve
@@ -56,6 +56,13 @@ type TileAsString = { s: string, nr: Int } | string
 type TileInstance = { tile: Tile, nr: Int } // nr is the number of instances of the tile
 
 type ConnectedParts = Map<string, Int>
+
+// distinctive colors, lfted from https://sashamaps.net/docs/resources/20-colors/
+export const dcolors =  ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0',
+ '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', 
+ '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
+ enum PolyformType { Polyomino, Polyabolo, Polyiamond, Polyhex }
+
 
 //#endregion
 //#region random stuff
@@ -78,7 +85,7 @@ export function isWithinMatrix(m: Int[][], x: Int, y: Int): boolean {
 //#region  string to matrix and back
 
 function mkMatrix(size: Int): Int[][] {
-    return _.range(size).map(() =>  Array(size).fill(0) )
+    return _.range(size).map(() => Array(size).fill(0))
 }
 
 export function stringToTile(s: string): Tile {
@@ -124,18 +131,19 @@ type Pos = { x: Int, y: Int }
 type Int = number
 
 // different from the perimeter walk, we fill right and down because up and left are already explored
-export const polyominoFloodFillWalk = [ right, down ]
-const polyhexFloodFillWalk = [ down, right ] // TBD
+export const polyominoFloodFillWalk = [right, down]
+export const polyhexFloodFillWalk = [down, right] // TBD
 
 
 
-export function connexParts(matrix: Int[][], pred : CellPredicate, walk : Pos[] ): Pos[][] {
+export function connexParts(matrix: Int[][], pred: CellPredicate,
+    walk: Pos[] = polyominoFloodFillWalk): Pos[][] {
     const connectedParts: Pos[][] = []
     let connexIdx = 0
     function key(x: Int, y: Int) {
         return `${x},${y}`
     }
-    function floodFill(x: Int, y: Int, connectedPart: Pos[] ) {
+    function floodFill(x: Int, y: Int, connectedPart: Pos[]) {
         for (const dir of walk) {
             const cx = x + dir.x
             const cy = y + dir.y
@@ -147,7 +155,7 @@ export function connexParts(matrix: Int[][], pred : CellPredicate, walk : Pos[] 
         if (isWithinMatrix(matrix, x, y) && pred(matrix, x, y)) {
             if (!map.has(key(x, y))) {
                 map.set(key(x, y), connexIdx)
-                connectedPart.push({x, y})
+                connectedPart.push({ x, y })
                 floodFill(x, y, connectedPart)
             }
         }
@@ -165,10 +173,10 @@ export function connexParts(matrix: Int[][], pred : CellPredicate, walk : Pos[] 
 }
 
 type CellPredicate = (matrix: Int[][], x: Int, y: Int) => boolean
-export const occupiedCell : CellPredicate = (matrix, x, y) => {
+export const occupiedCell: CellPredicate = (matrix, x, y) => {
     return matrix[y][x] != 0
 }
-export const  freeCell : CellPredicate = (matrix, x, y) => {
+export const freeCell: CellPredicate = (matrix, x, y) => {
     return matrix[y][x] == 0
 }
 
@@ -749,14 +757,25 @@ export type Coords = { x: Int, y: Int, direction?: Direction }
 enum Direction { Right, Down, Left, Up }
 // type Movement = { x: Int, y: Int, direction: Direction }
 
+export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: Pos|Pos[]): string {
+    const perimeter = calcPerimeter(tile, pos);
+    const points = perimeter.map(  (coord) => `${coord.x*squareSize},${coord.y*squareSize}` )
+    return points.join(' ')
+}
 
-export function calcPerimeter(tile: Tile) {
+
+// callulate the perimeter of connex component
+// if `firstSquare` is given, it is supposed a square Pos of a connex component
+// or the connex componebt Pos[]
+// if not, we walk the board to find an occuptied square
+export function calcPerimeter(tile: Tile, firstSquare?: Pos| Pos[]): Pos[] {
     const tileSize = tile.length
 
     let pos: Coords = { x: 0, y: 0 }
     let plPos: Coords = { x: 0, y: 0 }
     let direction: Direction = Direction.Right;
-    let firstSquarePos: Coords | null = null
+    let firstSquarePos: Coords | null = 
+        firstSquare ? Array.isArray(firstSquare) ? firstSquare[0] : firstSquare : null
     let firstSquareDirection = Direction.Right
     const svgPolyline: Coords[] = []
     let beginning = true
@@ -794,29 +813,38 @@ export function calcPerimeter(tile: Tile) {
         } else {
             plPos = { x: plPos.x + walk[(direction) % 4].x, y: plPos.y + walk[(direction) % 4].y, direction: direction }
         }
+        console.log('pushCoords', plPos.x, plPos.y, plPos.direction)
         svgPolyline.push(plPos);
         // DOMupdatePolyline()
         // the polyline direction is right orthogonal to the direction
     }
-
-    loop:
-    for (let y = 0; y < tileSize; y++) {
-        for (let x = 0; x < tileSize; x++) {
-            if (tile[y][x] != 0) {
-                pos = { x, y }
-                break loop
+    if (!firstSquare) {
+        loop:
+        for (let y = 0; y < tileSize; y++) {
+            for (let x = 0; x < tileSize; x++) {
+                if (tile[y][x] != 0) {
+                    pos = { x, y }
+                    break loop
+                }
             }
         }
+        firstSquarePos = { x: pos.x, y: pos.y }
+    } else {
+        pos = firstSquarePos
     }
-
-    firstSquarePos = { x: pos.x, y: pos.y }
+    console.log('firstSquarePos', firstSquarePos?.x, firstSquarePos?.y)
+    console.log(tile[firstSquarePos.y][firstSquarePos.x])
     firstSquareDirection = Direction.Right
     pushCoords(true)  // init
 
-    // let i = 0
+    let i = 0
     // eslint-disable-next-line no-constant-condition     
     while (true) {
-        // i++
+        i++
+        if (i > 1000) {
+            alert('infinite loop')
+            return svgPolyline;
+        }
         if (LeftOfSquareOccupied()) {
             goLeft()
             continue
