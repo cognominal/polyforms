@@ -4,10 +4,10 @@
 	import _ from 'lodash';
 	import { toSafeInteger } from 'lodash';
 	// import log from 'console';
-	export let w: Int;
-	export let h: Int;
 	export let squareSize: Int;
 	export let matrix: Matrix;
+	export let w: Int = matrix[0].length;
+	export let h: Int = matrix.length;
 	export let active: boolean;
 	const cw = w * squareSize;
 	const ch = h * squareSize;

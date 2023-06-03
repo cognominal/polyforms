@@ -3,13 +3,13 @@
     import type { Tile, Int, Pos } from '$lib/polyform'
     // import type { DragActions } from '$lib/drag'
     export let tile : Tile
-    export let squareSize = 8
+    export let cellSize = 8
     
     let boardSize =  50 // tile[0].length *squareSize
     // export let dragActions: DragActions
 </script>
 <svg width="{boardSize}" height="{boardSize}" viewBox="0 0 {boardSize} {boardSize}">
-        <polyline points={perimeterPolylinePoints(tile, squareSize)} class="pentamino draggable"/>
+        <polyline points={perimeterPolylinePoints(tile, cellSize)} class="pentamino draggable"/>
 </svg>
 <!-- </span> -->
 

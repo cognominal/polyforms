@@ -44,7 +44,7 @@ export type TileInfo = { orients: Orient[]; name?: string }
 // has a board to fill, a list of tile infos
 // about the tiles to lay,
 // a list of already laid tiles, 
-type PBoard = {
+export type PBoard = {
     board: Int[][] // 0 = empty, 1 = filled
     laidTiles: laidTile[]
     tilesInfo: TileInfo[]
