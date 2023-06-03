@@ -41,27 +41,34 @@
 </script>
 
 <span
-	use:asDroppable={{}}
+	class="span"
+	use:asDroppable={{
+		Extras: { tileI, pBoard }
+	}}
 	on:dblclick={handleClick}
 	on:click={handleClick}
 	on:keypress={handleKeypress}
 >
-	<svg width={boardSize} height={boardSize} viewBox="0 0 {boardSize} {boardSize}">
-		<polyline
-			points={perimeterPolylinePoints(tileFromI(pBoard, tileI), cellSize)}
-			class="pentamino draggable"
-		/>
-	</svg>
+	<div tabindex="-1">
+		<svg width={boardSize} height={boardSize} viewBox="0 0 {boardSize} {boardSize}"
+			class="pentamino draggable">
+			<polyline points={perimeterPolylinePoints(tileFromI(pBoard, tileI), cellSize)} />
+		</svg>
+	</div>
+	{#if pBoard.tilesLeft[tileI] != 1}
+		<div class="nrInstances" id="inr{tileI}">{pBoard.tilesLeft[tileI]}</div>
+	{/if}
 </span>
-{#if pBoard.tilesLeft[tileI] != 1}
-	<span class="nrInstances" id="inr{tileI}">{pBoard.tilesLeft[tileI]}</span>
-{/if}
-
-<!-- </span> -->
 
 <style>
-	.nrInstances {
+	.span {
+		display: inline-block;
 		margin: auto;
+	}
+	.nrInstances {
+		display: inline-block;
+		margin: auto;
+		text-align: center;
 	}
 
 	.pentamino {

@@ -1,8 +1,3 @@
-<script lang="ts" context="module">
-	import { asDroppable } from 'svelte-drag-and-drop-actions';
-	// import DragDropTouch from 'svelte-drag-drop-touch';
-</script>
-
 <script lang="ts">
 	import { calcPolyominos, GridMode } from '$lib/polyform';
 	import type { TileInfo, Int, PBoard } from '$lib/polyform';
