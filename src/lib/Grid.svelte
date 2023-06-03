@@ -15,7 +15,12 @@
 	$: connexParts_ = connexParts(matrix, occupiedCell);
 
 	function gridrectClass(matrix: Int[][], y: number, x: number): string {
-		return matrix[y][x] == 0 ? 'gridrect-free' : 'gridrect-occupied';
+		const _class = matrix[y][x] == 0 ? 'gridrect-free' : 'gridrect-occupied';
+		if (mode == GridMode.Play) {
+			return _class + '-play'; // no hover effect non play mode
+		} else {
+			return _class;
+		}
 	}
 
 	function handleClick(evt: MouseEvent) {
@@ -70,6 +75,15 @@
 	.gridline {
 		stroke: grey;
 		stroke-width: 0.5;
+	}
+
+	.gridrect-free-play {
+		fill: rgb(93, 102, 29);
+		fill-opacity: 0.1;
+	}
+	.gridrect-occupied-play {
+		fill: lightgreen;
+		opacity: 0.5;
 	}
 	.gridrect-free {
 		fill: rgb(93, 102, 29);
