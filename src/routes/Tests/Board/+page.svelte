@@ -17,10 +17,18 @@
 	let pBoard: PBoard = setPBoard(10, 6, pentaminoTi);
 </script>
 
-<p>A start at a board/tile editor</p>
+<p>Both editors will diverge. Baord editor will display in black occupied cells.
+	So the perimeter is uneeded. A tile editor will enforce a single connex part
+</p>
+<p>A start at a board editor</p>
 <div class="container" style="height:{boardSize}px;">
 	<Grid squareSize={cellSize} matrix={tile} mode={GridMode.BoardEditor} />
 </div>
+<p>A start at a tile editor</p>
+<div class="container" style="height:{boardSize}px;">
+	<Grid squareSize={cellSize} matrix={tile} mode={GridMode.TileEditor} />
+</div>
+
 <hr />
 <p>A tile board and a problem board. One drag a tile from the former to
 	drop it in the latter. (drop TBD)
