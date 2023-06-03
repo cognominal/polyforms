@@ -38,20 +38,38 @@
 		}
 	}
 	function handleKeypress() {}
+	function onDragMove(x: number, y: number, dx: number, dy: number, DroppableExtras: any): void {
+		// console.log('onDragMove', x,y, dx,dy, DroppableExtras);
+	}
+	function onDropped(
+		x,
+		y,
+		Operation,
+		TypeTransferred,
+		DataTransferred,
+		DropZoneExtras,
+		DroppableExtras
+	) {
+		console.log('droped');
+	}
 </script>
 
-<span
-	class="span"
-	use:asDroppable={{
-		Extras: { tileI, pBoard }
-	}}
-	on:dblclick={handleClick}
-	on:click={handleClick}
-	on:keypress={handleKeypress}
->
-	<div tabindex="-1">
-		<svg width={boardSize} height={boardSize} viewBox="0 0 {boardSize} {boardSize}"
-			class="pentamino draggable">
+<span class="span" on:dblclick={handleClick} on:click={handleClick} on:keypress={handleKeypress}>
+	<div
+		tabindex="-1"
+		use:asDroppable={{
+			Extras: { tileI, pBoard },
+			Operations: 'move',
+			onDragMove,
+			onDropped
+		}}
+	>
+		<svg
+			width={boardSize}
+			height={boardSize}
+			viewBox="0 0 {boardSize} {boardSize}"
+			class="pentamino draggable"
+		>
 			<polyline points={perimeterPolylinePoints(tileFromI(pBoard, tileI), cellSize)} />
 		</svg>
 	</div>
