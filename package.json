@@ -36,6 +36,9 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+		"svelte-drag-and-drop-actions": "github:rozek/svelte-drag-and-drop-actions",
+		"svelte-drag-drop-touch": "^0.1.9",
+		"tippy": "^0.0.0"
 	}
 }

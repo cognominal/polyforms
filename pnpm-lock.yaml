@@ -8,6 +8,15 @@ dependencies:
   lodash:
     specifier: ^4.17.21
     version: 4.17.21
+  svelte-drag-and-drop-actions:
+    specifier: github:rozek/svelte-drag-and-drop-actions
+    version: github.com/rozek/svelte-drag-and-drop-actions/e091934e52748f935d6b2da1b2405ee4919804e5
+  svelte-drag-drop-touch:
+    specifier: ^0.1.9
+    version: 0.1.9
+  tippy:
+    specifier: ^0.0.0
+    version: 0.0.0
 
 devDependencies:
   '@fontsource/fira-mono':
@@ -849,6 +858,10 @@ packages:
       esutils: 2.0.3
     dev: true
 
+  /dragdroptouch-bug-fixed@1.0.8:
+    resolution: {integrity: sha512-moNgBeWMeUk4zhV3B+a4TZUPmHVJz+cvjWEXENLEU3toVnm3lpS+ZkSwVbBxArDUQ8HSm1qA0UmKWWy1y7nvng==}
+    dev: false
+
   /es6-promise@3.3.1:
     resolution: {integrity: sha512-SOp9Phqvqn7jtEUxPWdWfWoLmyt2VaJ6MpvP9Comy1MceMXqE6bxvaTu4iaxpYYPzhny28Lc+M87/c2cPK6lDg==}
     dev: true
@@ -1247,6 +1260,10 @@ packages:
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
+
+  /javascript-interface-library@0.1.14:
+    resolution: {integrity: sha512-TSdQbLKqq6PcFk9M9Qk+l45rjqWfTMhSkvZVcByy1tKsDYDH+kblKu/FcVk4lWkeYXvcczX8NtPGdeyrZYEBrw==}
+    dev: false
 
   /js-yaml@4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
@@ -1732,6 +1749,23 @@ packages:
       - sugarss
     dev: true
 
+  /svelte-coordinate-conversion@0.1.9:
+    resolution: {integrity: sha512-9BBAoZ7U5psGxgYKd61DEFxou3MmWrW9xIGvgG1n+Jtg47ll/jpNYsiS8iy6fVu1Sfbq3TQF/cljqRKHwaOeeg==}
+    dev: false
+
+  /svelte-drag-and-drop-actions@0.1.35:
+    resolution: {integrity: sha512-v2XtENssLfX5BE41E5653emXSTHd1hHtEXtB2k8PbTQ0jC0iB/WdEx9SwWesoKXRLcvLN7WLDVnmuSB3g3BIeg==}
+    dependencies:
+      javascript-interface-library: 0.1.14
+      svelte-coordinate-conversion: 0.1.9
+    dev: false
+
+  /svelte-drag-drop-touch@0.1.9:
+    resolution: {integrity: sha512-DWAMC+6xBRkl5OuVR7ze+znSKERlX9t9cx4/kzoWOnPwLFvv4g8YTtQxmO8wfWfETi9qgg/cnw58gmhZKY9vyw==}
+    dependencies:
+      dragdroptouch-bug-fixed: 1.0.8
+    dev: false
+
   /svelte-eslint-parser@0.30.0(svelte@3.59.1):
     resolution: {integrity: sha512-H0Cn2TKr70DU9p/Gb04CfwtS7eK28MYumrHYPaDNkIFbfwGDLADpbERBn7u8G1Rcm2RMr2/mL6mq0J2e8iKFlA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
@@ -1833,6 +1867,10 @@ packages:
     resolution: {integrity: sha512-UVq5AXt/gQlti7oxoIg5oi/9r0WpF7DGEVwXgqWSMmyN16+e3tl5lIvTaOpJ3TAtu5xFzWccFRM4R5NaWHF+4g==}
     engines: {node: '>=14.0.0'}
     dev: true
+
+  /tippy@0.0.0:
+    resolution: {integrity: sha512-GOrE/mzoeL4t7Q2Bky+7efOZJKH3W95DZIUez+nUns37jHf8R9PEupuEx9F7HolxX+0fzzpKfas2N+LIlYHXAA==}
+    dev: false
 
   /to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -2019,3 +2057,13 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  github.com/rozek/svelte-drag-and-drop-actions/e091934e52748f935d6b2da1b2405ee4919804e5:
+    resolution: {tarball: https://codeload.github.com/rozek/svelte-drag-and-drop-actions/tar.gz/e091934e52748f935d6b2da1b2405ee4919804e5}
+    name: svelte-drag-and-drop-actions
+    version: 1.0.0
+    dependencies:
+      javascript-interface-library: 0.1.14
+      svelte-coordinate-conversion: 0.1.9
+      svelte-drag-and-drop-actions: 0.1.35
+    dev: false
