@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { toSafeInteger } from 'lodash';
-	import { calcPolyominos, setPBoard } from '$lib/polyform';
+	import { calcPolyominos, setPBoard, GridMode } from '$lib/polyform';
 	import type { TileInfo, PBoard } from '$lib/polyform';
 	import Pentamino from '$lib/Polyform.svelte';
 	import Grid from '$lib/Grid.svelte';
@@ -19,7 +19,7 @@
 
 <p>A start at a board/tile editor</p>
 <div class="container" style="height:{boardSize}px;">
-	<Grid squareSize={cellSize} matrix={tile} active={false} />
+	<Grid squareSize={cellSize} matrix={tile} mode={GridMode.BoardEditor} />
 </div>
 <hr />
 <p>A tile board and a problem board. One drag a tile from the former to

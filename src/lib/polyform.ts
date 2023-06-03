@@ -56,6 +56,7 @@ type TileAsString = { s: string, nr: Int } | string
 type TileInstance = { tile: Tile, nr: Int } // nr is the number of instances of the tile
 
 type ConnectedParts = Map<string, Int>
+export enum GridMode { TileEditor, BoardEditor, Play }
 
 // distinctive colors, lfted from https://sashamaps.net/docs/resources/20-colors/
 export const dcolors =  ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0',

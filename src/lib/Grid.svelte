@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { connexParts, occupiedCell, perimeterPolylinePoints, dcolors } from '$lib/polyform';
-	import type { Int, Pos, Tile, Matrix } from '$lib/polyform';
+	import { type Int, type Pos, type Tile, type Matrix, GridMode } from '$lib/polyform';
 	import _ from 'lodash';
 	import { toSafeInteger } from 'lodash';
 	// import log from 'console';
@@ -8,7 +8,7 @@
 	export let matrix: Matrix;
 	export let w: Int = matrix[0].length;
 	export let h: Int = matrix.length;
-	export let active: boolean;
+	export let mode: GridMode;
 	const cw = w * squareSize;
 	const ch = h * squareSize;
 	let connexParts_: Pos[][] = [];
@@ -19,11 +19,13 @@
 	}
 
 	function handleClick(evt: MouseEvent) {
-		let target = evt.target as SVGElement;
-		let nm = _.cloneDeep(matrix);
-		const [x, y] = target.id.split('-').map((s) => parseInt(s));
-		matrix[y][x] = matrix[y][x] == 0 ? 1 : 0;
-		matrix = matrix;
+		if (mode == GridMode.TileEditor || mode == GridMode.BoardEditor) {
+			let target = evt.target as SVGElement;
+			let nm = _.cloneDeep(matrix);
+			const [x, y] = target.id.split('-').map((s) => parseInt(s));
+			matrix[y][x] = matrix[y][x] == 0 ? 1 : 0;
+			matrix = matrix;
+		}
 	}
 	function handleKey(evt: KeyboardEvent) {}
 </script>
@@ -49,7 +51,7 @@
 			{/each}
 		{/each}
 		{#each connexParts_ as part, i}
-			<polyline 
+			<polyline
 				points={perimeterPolylinePoints(matrix, squareSize, part)}
 				style="fill:{dcolors[i]};stroke:black;stroke-width:1"
 				class="noevents"
