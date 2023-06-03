@@ -30,28 +30,35 @@
 	function handleClick(evt: MouseEvent) {
 		if (mode == GridMode.TileEditor || mode == GridMode.BoardEditor) {
 			let target = evt.target as SVGElement;
-			let nm = _.cloneDeep(matrix);
+			// let nm = _.cloneDeep(matrix);
 			const [x, y] = target.id.split('-').map((s) => parseInt(s));
 			matrix[y][x] = matrix[y][x] == 0 ? 1 : 0;
+			if (mode == GridMode.TileEditor && connexParts(matrix, occupiedCell).length != 1) {
+				matrix[y][x] = matrix[y][x] == 0 ? 1 : 0; // revert
+			}
 			matrix = matrix;
 		}
 	}
 	function handleKey(evt: KeyboardEvent) {}
 
-	function onDropped(x: Int,y: Int) // , Operation, TypeTransferred, DataTransferred, DropZoneExtras, DroppableExtras)
-	{
+	function onDropped(x: Int, y: Int) {
+		// , Operation, TypeTransferred, DataTransferred, DropZoneExtras, DroppableExtras)
 		console.log('onDropped', x, y);
 	}
-	function onDrop(x: number, y: number, Operation: string, DataOffered: any, DroppableExtras: any, DropZoneExtras: any) : string | undefined {
-
+	function onDrop(
+		x: number,
+		y: number,
+		Operation: string,
+		DataOffered: any,
+		DroppableExtras: any,
+		DropZoneExtras: any
+	): string | undefined {
 		console.log('onDrop', x, y);
-		return 'WTF'
+		return 'WTF';
 	}
 </script>
 
-<span class="contained" on:click={handleClick} on:keypress={handleKey}
-	use:asDropZone={{ onDrop }}>
-
+<span class="contained" on:click={handleClick} on:keypress={handleKey} use:asDropZone={{ onDrop }}>
 	<!-- Draw the grid proper	-->
 	<svg width={cw} height={ch} viewBox="0 0 {cw} {ch}">
 		{#each Array(h + 1) as _, i}
@@ -74,13 +81,15 @@
 			{/each}
 		{/each}
 		<!-- draw the perimeter of the connex parts -->
-		{#each connexParts_ as part, i}
-			<polyline
-				points={perimeterPolylinePoints(matrix, squareSize, part)}
-				style="fill:{dcolors[i]};stroke:black;stroke-width:1"
-				class="noevents"
-			/>
-		{/each}
+		{#if mode != GridMode.BoardEditor}
+			{#each connexParts_ as part, i}
+				<polyline
+					points={perimeterPolylinePoints(matrix, squareSize, part)}
+					style="fill:{dcolors[i]};stroke:black;stroke-width:1"
+					class="noevents"
+				/>
+			{/each}
+		{/if}
 	</svg>
 </span>
 
@@ -113,7 +122,7 @@
 		fill-opacity: 0.8;
 	}
 	.gridrect-occupied {
-		fill: lightgreen;
+		fill: black;
 		opacity: 0.5;
 	}
 	.gridrect-occupied:hover {
