@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { toSafeInteger } from 'lodash';
 	import { calcPolyominos, setPBoard } from '$lib/polyform';
 	import type { TileInfo, PBoard } from '$lib/polyform';
 	import Pentamino from '$lib/Polyform.svelte';
@@ -16,10 +17,14 @@
 	let pBoard: PBoard = setPBoard(10, 6, pentaminoTi);
 </script>
 
+<p>A start at a board/tile editor</p>
 <div class="container" style="height:{boardSize}px;">
 	<Grid squareSize={cellSize} matrix={tile} active={false} />
 </div>
 <hr />
+<p>A tile board and a problem board. One drag a tile from the former to
+	drop it in the latter. (drop TBD)
+</p>
 <div>
 	<TileBoard {pBoard} {cellSize} />
 	<PPBoard {pBoard} />
