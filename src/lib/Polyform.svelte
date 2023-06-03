@@ -33,7 +33,8 @@
 			clicked = false;
 			evt.preventDefault();
 			// handle double click
-			pBoard.tilesLeft[tileI]--;
+			// or should I remove the tile? grey it out?
+			if (pBoard.tilesLeft[tileI] > 1) pBoard.tilesLeft[tileI]--;
 		}
 	}
 	function handleKeypress() {}
@@ -52,7 +53,9 @@
 		/>
 	</svg>
 </span>
-<span class="nrInstances" id="inr{tileI}">{pBoard.tilesLeft[tileI]}</span>
+{#if pBoard.tilesLeft[tileI] != 1}
+	<span class="nrInstances" id="inr{tileI}">{pBoard.tilesLeft[tileI]}</span>
+{/if}
 
 <!-- </span> -->
 
