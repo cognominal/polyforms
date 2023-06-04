@@ -7,7 +7,7 @@
 </svelte:head>
 
 <section>
-	<div><a href="Tests/Board">Tests/Board</a></div>
+	<div>parts supposedly tested with PlayWright: <a href="Tests/Board">Tests/Board</a></div>
 	<h1>
 		The app will be there
 	</h1>
