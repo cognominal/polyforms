@@ -24,7 +24,7 @@ export function draggable(node: HTMLElement, data) {
 			node.removeEventListener('dragstart', handle_dragstart);
 		}
 	};
-}zw
+}
 
 type OnDropZone = (data: string, event: DragEvent) => void;
 

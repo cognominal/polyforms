@@ -1,0 +1,72 @@
+{
+    "version": "0.2.0",
+    "compounds" : [
+        {
+            "name": "Compound svelte + chrome",
+            "configurations": ["Launch Chrome", "Launch SvelteKit"],
+            "stopAll": true
+        }
+    ],
+    "configurations": [
+
+            {
+                "type": "chrome",
+                "request": "launch",
+                "name": "Launch Chrome",
+                "url": "http://localhost:3000",
+                "webRoot": "${workspaceFolder}"
+            },
+            {
+                "command": "pnpm  vite dev --port 3000",
+                "name": "Launch SvelteKit",
+                "request": "launch",
+                "type": "node-terminal"
+            },
+    
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Playwright tests",
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "vscode-debug",
+                "--",
+                "${fileBasename}"
+            ],
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Playwright Inspector",
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "vscode-debug",
+                "--",
+                "${fileBasename}"
+            ],
+            "env": {
+                "PWDEBUG": "1",
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug vitest",
+            "program": "${workspaceFolder}/node_modules/.bin/vitest",
+            "args": ["--runInBand"],
+            "env": {
+              "MY_ENV_VARIABLE": "my-value"
+            }
+        }
+    ]
+}
