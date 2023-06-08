@@ -57,6 +57,7 @@ type TileInstance = { tile: Tile, nr: Int } // nr is the number of instances of 
 
 type ConnectedParts = Map<string, Int>
 export enum GridMode { TileEditor, BoardEditor, Play }
+export type TileDropInfo = { tileI : Int, pboard: PBoard }
 
 // distinctive colors, lfted from https://sashamaps.net/docs/resources/20-colors/
 export const dcolors =  ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0',
@@ -825,4 +826,9 @@ export function calcPerimeter(tile: Tile, firstSquare?: Pos| Pos[]): Pos[] {
     return svgPolyline;
 }
 
-
+export function getRelativeCoordinates(event, target) {
+    const rect = target.getBoundingClientRect();
+    const x = event.clientX - rect.left - window.scrollX;
+    const y = event.clientY - rect.top - window.scrollY;
+    return { x, y };
+  }

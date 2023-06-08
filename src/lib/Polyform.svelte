@@ -1,11 +1,10 @@
-<script lang="ts" context="module">
-	import { asDroppable } from 'svelte-drag-and-drop-actions';
-	// import DragDropTouch from 'svelte-drag-drop-touch';
-</script>
+
 
 <script lang="ts">
+	import { draggable } from '$lib/dnd';
 	import { calcPerimeter, perimeterPolylinePoints } from '$lib/polyform';
 	import type { Tile, Int, Pos, PBoard, TileInfo } from '$lib/polyform';
+	import Grid from './Grid.svelte';
 	export let tileI: Int;
 	export let pBoard: PBoard;
 	export let cellSize = 8;
@@ -41,28 +40,16 @@
 	function onDragMove(x: number, y: number, dx: number, dy: number, DroppableExtras: any): void {
 		// console.log('onDragMove', x,y, dx,dy, DroppableExtras);
 	}
-	function onDropped(
-		x,
-		y,
-		Operation,
-		TypeTransferred,
-		DataTransferred,
-		DropZoneExtras,
-		DroppableExtras
-	) {
-		console.log('droped');
+	function onDropped(x: number, y: number, Operation: string, TypeTransferred: string, DataTransferred: any, DropZoneExtras: any, DroppableExtras: any) : void {
+		console.log('onDropped', x,y, Operation, TypeTransferred, DataTransferred, DropZoneExtras, DroppableExtras);
 	}
+
 </script>
 
 <span class="span" on:dblclick={handleClick} on:click={handleClick} on:keypress={handleKeypress}>
 	<div
 		tabindex="-1"
-		use:asDroppable={{
-			Extras: { tileI, pBoard },
-			Operations: 'move',
-			onDragMove,
-			onDropped
-		}}
+		use:draggable={{ tileI, pBoard }}
 	>
 		<svg
 			width={boardSize}
@@ -95,20 +82,11 @@
 		stroke-width: 2;
 	}
 
-	.draggable {
+	/* .draggable {
 		cursor: move;
-	}
+	} */
 
 	.pentamino:hover {
 		fill: blue;
-	}
-	:global([draggable]) {
-		-webkit-touch-callout: none;
-		-ms-touch-action: none;
-		touch-action: none;
-		-moz-user-select: none;
-		-webkit-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
 	}
 </style>

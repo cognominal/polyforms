@@ -1,11 +1,11 @@
-<script lang="ts" context="module">
-	import { asDropZone } from 'svelte-drag-and-drop-actions';
-	// import DragDropTouch from 'svelte-drag-drop-touch';
-</script>
+
 
 <script lang="ts">
+	// import '$lib/global.css'
+	import { dropzone } from '$lib/dnd'
 	import { connexParts, occupiedCell, perimeterPolylinePoints, dcolors } from '$lib/polyform';
 	import { type Int, type Pos, type Tile, type Matrix, GridMode } from '$lib/polyform';
+	import type { TileDropInfo } from '$lib/polyform';
 	import _ from 'lodash';
 	// import log from 'console';
 	export let squareSize: Int;
@@ -41,24 +41,9 @@
 	}
 	function handleKey(evt: KeyboardEvent) {}
 
-	function onDropped(x: Int, y: Int) {
-		// , Operation, TypeTransferred, DataTransferred, DropZoneExtras, DroppableExtras)
-		console.log('onDropped', x, y);
-	}
-	function onDrop(
-		x: number,
-		y: number,
-		Operation: string,
-		DataOffered: any,
-		DroppableExtras: any,
-		DropZoneExtras: any
-	): string | undefined {
-		console.log('onDrop', x, y);
-		return 'WTF';
-	}
 </script>
 
-<span class="contained" on:click={handleClick} on:keypress={handleKey} use:asDropZone={{ onDrop }}>
+<span class="contained" on:click={handleClick} on:keypress={handleKey} >
 	<!-- Draw the grid proper	-->
 	<svg width={cw} height={ch} viewBox="0 0 {cw} {ch}">
 		{#each Array(h + 1) as _, i}
@@ -129,4 +114,14 @@
 		opacity: 0.5;
 		fill: green;
 	}
+
+	:global(.droppable) {
+		outline: 0.1rem solid var(--sk-theme-1);
+		outline-offset: 0.25rem;
+	}
+
+	:global(.droppable) * {
+		pointer-events: none;
+	}
+
 </style>
