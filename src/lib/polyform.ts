@@ -33,25 +33,35 @@ type Orient = { matrix: Int[][], firstX: Int }
 
 //   pboard being a PBoard  an orientation is accessed as pboard.tileInfos[tileI].orients[orientI]
 type OrientIdx = { tileI: Int; orientI: Int }
-// A laid title has a position and an orientation 
+// A laid title has a logical position and an orientation 
 type laidTile = { pos: LPos; idx: OrientIdx }
-type unlaidTile = { tileI: Int, idx: OrientIdx, pos: Pos }
-// A tile has a name and a list of orients
-// As instances are laid, `instancesLeft` is decremented
+// An unlaid tile has a physical position and an orientation
+type FloatingTile = { tileI: Int, idx: OrientIdx, pos: Pos }
+// A tile has an optional name and a list of orients
 export type TileInfo = { orients: Orient[]; name?: string }
 
 
 // A problem board or `PBoard` is self contained and represents a problem to solve
-// or the state of thearch
-// has a board to fill, a list of tile infos
-// about the tiles to lay,
-// a list of already laid tiles, 
+// or the state of the search, being manual of thru the solver.
+// A tile can be proposed with n instances.
+// When dragged to the PPBoard, it can be floating or laid and the corresponding
+// `tilesLeft` is decremented.
+// When laid, it cannot occupied a square already occupied by another tile
+// For some polyforms, a square of the board can hold more than one cell of the polyform TBD
+
+// A svelte component PPboard graphically represents a PBoard with laid and floating tiles.
 export type PBoard = {
-    board: Int[][] // 0 = empty, 1 = filled
-    laidTiles: laidTile[]
+// associated svelte component : `PPBoard`
+    board: Int[][] // 0 =e empty, 1 = filled
+    floatingTiles: FloatingTile[]
+    laidTiles: laidTile[]    
+
+// Associated svelte component : `TileBoard`
+// The tiles to be laid are in `tilesInfo`. For a tile at index `tileI`, the number of instances
+// left is `tilesLeft[tileI]`   
     tilesInfo: TileInfo[]
     tilesLeft: Int[] // number of tiles instances left for each tile
-    // idx: OrientIdx
+
 
 }
 type TileAsString = { s: string, nr: Int } | string
