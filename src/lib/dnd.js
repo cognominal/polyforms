@@ -55,6 +55,7 @@ export function dropzone(node, options) {
 	}
 
 	function handle_drop(e) {
+		console.log("🚀 ~ file: dnd.js:58 ~ handle_drop ~ e:", e)
 		e.preventDefault();
 		if (!e.dataTransfer) return;
 		const data = e.dataTransfer.getData('text/plain');

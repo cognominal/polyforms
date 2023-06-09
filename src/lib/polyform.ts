@@ -36,7 +36,7 @@ type OrientIdx = { tileI: Int; orientI: Int }
 // A laid title has a logical position and an orientation 
 type laidTile = { pos: LPos; idx: OrientIdx }
 // An unlaid tile has a physical position and an orientation
-type FloatingTile = { tileI: Int, idx: OrientIdx, pos: Pos }
+export type FloatingTile = { oidx: OrientIdx, pos: Pos }
 // A tile has an optional name and a list of orients
 export type TileInfo = { orients: Orient[]; name?: string }
 
@@ -51,14 +51,14 @@ export type TileInfo = { orients: Orient[]; name?: string }
 
 // A svelte component PPboard graphically represents a PBoard with laid and floating tiles.
 export type PBoard = {
-// associated svelte component : `PPBoard`
+    // associated svelte component : `PPBoard`
     board: Int[][] // 0 =e empty, 1 = filled
     floatingTiles: FloatingTile[]
-    laidTiles: laidTile[]    
+    laidTiles: laidTile[]
 
-// Associated svelte component : `TileBoard`
-// The tiles to be laid are in `tilesInfo`. For a tile at index `tileI`, the number of instances
-// left is `tilesLeft[tileI]`   
+    // Associated svelte component : `TileBoard`
+    // The tiles to be laid are in `tilesInfo`. For a tile at index `tileI`, the number of instances
+    // left is `tilesLeft[tileI]`   
     tilesInfo: TileInfo[]
     tilesLeft: Int[] // number of tiles instances left for each tile
 
@@ -69,13 +69,13 @@ type TileInstance = { tile: Tile, nr: Int } // nr is the number of instances of 
 
 type ConnectedParts = Map<string, Int>
 export enum GridMode { TileEditor, BoardEditor, Play }
-export type TileDropInfo = { tileI : Int, pboard: PBoard }
+export type TileDropInfo = { tileI: Int, pboard: PBoard }
 
 // distinctive colors, lfted from https://sashamaps.net/docs/resources/20-colors/
-export const dcolors =  ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0',
- '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', 
- '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
- enum PolyformType { Polyomino, Polyabolo, Polyiamond, Polyhex }
+export const dcolors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0',
+    '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8',
+    '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
+enum PolyformType { Polyomino, Polyabolo, Polyiamond, Polyhex }
 
 
 //#endregion
@@ -727,7 +727,11 @@ export function setPBoard(width: Int, height: Int, ti: TileAsString[] | TileAsSt
 
 
     // let tilesInfo = _.cloneDeep(tilesInfo)
-    return { board, laidTiles: [], tilesInfo, tilesLeft } as PBoard
+    const pboard: PBoard = {
+        board, laidTiles: [], floatingTiles: [],
+        tilesInfo, tilesLeft
+    }
+    return pboard
 }
 
 export type Coords = { x: Int, y: Int, direction?: Direction }
@@ -736,9 +740,9 @@ export type Coords = { x: Int, y: Int, direction?: Direction }
 enum Direction { Right, Down, Left, Up }
 // type Movement = { x: Int, y: Int, direction: Direction }
 
-export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: LPos|LPos[]): string {
+export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: LPos | LPos[]): string {
     const perimeter = calcPerimeter(tile, pos);
-    const points = perimeter.map(  (coord) => `${coord.x*squareSize},${coord.y*squareSize}` )
+    const points = perimeter.map((coord) => `${coord.x * squareSize},${coord.y * squareSize}`)
     return points.join(' ')
 }
 
@@ -748,13 +752,13 @@ export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: LPos|
 // or the connex component Pos[]
 // if not, we walk the board to find an occuptied square 
 // does not handle tiles with holes
-export function calcPerimeter(tile: Tile, firstSquare?: LPos| LPos[]): LPos[] {
+export function calcPerimeter(tile: Tile, firstSquare?: LPos | LPos[]): LPos[] {
     const tileSize = tile.length
 
     let pos: Coords = { x: 0, y: 0 }
     let plPos: Coords = { x: 0, y: 0 }
     let direction: Direction = Direction.Right;
-    let firstSquarePos: Coords | null = 
+    let firstSquarePos: Coords | null =
         firstSquare ? Array.isArray(firstSquare) ? firstSquare[0] : firstSquare : null
     let firstSquareDirection = Direction.Right
     const svgPolyline: Coords[] = []
@@ -843,4 +847,8 @@ export function getRelativeCoordinates(event, target) {
     const x = event.clientX - rect.left - window.scrollX;
     const y = event.clientY - rect.top - window.scrollY;
     return { x, y };
-  }
+}
+
+export function tileFromI(pboard: PBoard, ti: Int, oi: Int = 0): Tile {
+    return pboard.tilesInfo[ti].orients[oi].matrix;
+}

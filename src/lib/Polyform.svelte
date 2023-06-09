@@ -1,18 +1,31 @@
 <script lang="ts">
 	import { draggable } from '$lib/dnd';
-	import { calcPerimeter, perimeterPolylinePoints } from '$lib/polyform';
-	import type { Tile, Int, LPos, PBoard, TileInfo } from '$lib/polyform';
+	import { calcPerimeter, perimeterPolylinePoints, tileFromI } from '$lib/polyform';
+	import type { Tile, Int, LPos, Pos, PBoard, TileInfo, FloatingTile } from '$lib/polyform';
 	import Grid from './Grid.svelte';
-	export let tileI: Int;
-	export let pBoard: PBoard;
+	export let tileI: Int = 0;
+	export let pboard: PBoard;
 	export let cellSize = 8;
-
+	export let ftile = undefined as unknown as FloatingTile;
 	let boardSize = 50; // tile[0].length *squareSize
-	// export let dragActions: DragActions
+	$: style = setStyle(ftile);
+	$: TileI = ftile ? ftile.oidx.tileI : tileI;
 
-	function tileFromI(pBoard: PBoard, i: Int): Tile {
-		return pBoard.tilesInfo[i].orients[0].matrix;
+	function setStyle(ftile: FloatingTile) {
+		console.log("setStyle", ftile);
+		if (ftile) {
+			const pos = ftile.pos;
+			return `
+				transform: translate(${pos.x * cellSize}px, ${pos.y * cellSize}px)
+				poaition: absolute;
+				`;
+		} 
+		// else if (lpos) {
+		// 	// TBD 
+		// }
 	}
+
+
 
 	let clicked = false;
 
@@ -23,7 +36,7 @@
 				if (clicked) {
 					clicked = false;
 					// handle single click
-					pBoard.tilesLeft[tileI]++;
+					pboard.tilesLeft[tileI]++;
 				}
 			}, 300);
 		} else {
@@ -31,48 +44,28 @@
 			evt.preventDefault();
 			// handle double click
 			// or should I remove the tile? grey it out?
-			if (pBoard.tilesLeft[tileI] > 1) pBoard.tilesLeft[tileI]--;
+			if (pboard.tilesLeft[tileI] > 1) pboard.tilesLeft[tileI]--;
 		}
 	}
 	function handleKeypress() {}
-	function onDragMove(x: number, y: number, dx: number, dy: number, DroppableExtras: any): void {
-		// console.log('onDragMove', x,y, dx,dy, DroppableExtras);
-	}
-	function onDropped(
-		x: number,
-		y: number,
-		Operation: string,
-		TypeTransferred: string,
-		DataTransferred: any,
-		DropZoneExtras: any,
-		DroppableExtras: any
-	): void {
-		console.log(
-			'onDropped',
-			x,
-			y,
-			Operation,
-			TypeTransferred,
-			DataTransferred,
-			DropZoneExtras,
-			DroppableExtras
-		);
-	}
+
 </script>
 
-<span class="span" on:dblclick={handleClick} on:click={handleClick} on:keypress={handleKeypress}>
-	<div tabindex="-1" use:draggable={{ tileI, pBoard }}>
+<span class="span" 
+	style={style}
+	on:dblclick={handleClick} on:click={handleClick} on:keypress={handleKeypress}>
+	<div tabindex="-1" use:draggable={{ tileI, pBoard: pboard }}>
 		<svg
 			width={boardSize}
 			height={boardSize}
 			viewBox="0 0 {boardSize} {boardSize}"
 			class="pentamino draggable"
 		>
-			<polyline points={perimeterPolylinePoints(tileFromI(pBoard, tileI), cellSize)} />
+			<polyline points={perimeterPolylinePoints(tileFromI(pboard, tileI), cellSize)} />
 		</svg>
 	</div>
-	{#if pBoard.tilesLeft[tileI] != 1}
-		<div class="nrInstances" id="inr{tileI}">{pBoard.tilesLeft[tileI]}</div>
+	{#if pboard.tilesLeft[tileI] != 1}
+		<div class="nrInstances" id="inr{tileI}">{pboard.tilesLeft[tileI]}</div>
 	{/if}
 </span>
 
