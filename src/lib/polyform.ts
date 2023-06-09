@@ -852,3 +852,7 @@ export function getRelativeCoordinates(event, target) {
 export function tileFromI(pboard: PBoard, ti: Int, oi: Int = 0): Tile {
     return pboard.tilesInfo[ti].orients[oi].matrix;
 }
+
+export function nrOrientsFromI(pboard: PBoard, ti: Int): Int {
+    return pboard.tilesInfo[ti].orients.length;
+}
