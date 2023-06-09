@@ -1,9 +1,7 @@
-
-
 <script lang="ts">
 	import { draggable } from '$lib/dnd';
 	import { calcPerimeter, perimeterPolylinePoints } from '$lib/polyform';
-	import type { Tile, Int, Pos, PBoard, TileInfo } from '$lib/polyform';
+	import type { Tile, Int, LPos, PBoard, TileInfo } from '$lib/polyform';
 	import Grid from './Grid.svelte';
 	export let tileI: Int;
 	export let pBoard: PBoard;
@@ -40,17 +38,30 @@
 	function onDragMove(x: number, y: number, dx: number, dy: number, DroppableExtras: any): void {
 		// console.log('onDragMove', x,y, dx,dy, DroppableExtras);
 	}
-	function onDropped(x: number, y: number, Operation: string, TypeTransferred: string, DataTransferred: any, DropZoneExtras: any, DroppableExtras: any) : void {
-		console.log('onDropped', x,y, Operation, TypeTransferred, DataTransferred, DropZoneExtras, DroppableExtras);
+	function onDropped(
+		x: number,
+		y: number,
+		Operation: string,
+		TypeTransferred: string,
+		DataTransferred: any,
+		DropZoneExtras: any,
+		DroppableExtras: any
+	): void {
+		console.log(
+			'onDropped',
+			x,
+			y,
+			Operation,
+			TypeTransferred,
+			DataTransferred,
+			DropZoneExtras,
+			DroppableExtras
+		);
 	}
-
 </script>
 
 <span class="span" on:dblclick={handleClick} on:click={handleClick} on:keypress={handleKeypress}>
-	<div
-		tabindex="-1"
-		use:draggable={{ tileI, pBoard }}
-	>
+	<div tabindex="-1" use:draggable={{ tileI, pBoard }}>
 		<svg
 			width={boardSize}
 			height={boardSize}

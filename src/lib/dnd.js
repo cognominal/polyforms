@@ -1,6 +1,9 @@
-// import type { Mouse } from "@playwright/test";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 
-export function draggable(node: HTMLElement, data) {
+// borrowed from https://www.sveltelab.dev/xzz3zkyjzwe6kfk
+
+export function draggable(node, data) {
 	let state = data;
 
 	node.draggable = true;
@@ -8,9 +11,11 @@ export function draggable(node: HTMLElement, data) {
 
 	function handle_dragstart(e) {
 		if (!e.dataTransfer) return;
-		const data = JSON.stringify(state)
-		// console.log('dragstart', data);
-		e.dataTransfer.setData('text/plain', data)
+		// console.log("🚀 ~ file: dnd.js:12 ~ handle_dragstart ~ e:", e)
+        console.log(`x ${e.offsetX} y ${e.offsetY}`)
+		const stateAsText = JSON.stringify(state)
+
+		e.dataTransfer.setData('text/plain', stateAsText);
 	}
 
 	node.addEventListener('dragstart', handle_dragstart);
@@ -26,45 +31,32 @@ export function draggable(node: HTMLElement, data) {
 	};
 }
 
-type OnDropZone = (data: string, event: DragEvent) => void;
-
-export interface DropzoneOptions {
-	dropEffect?: string;
-	dragover_class?: string;
-	on_dropzone: OnDropZone;
-}
-
-interface DropzoneState {
-	dropEffect: string;
-	dragover_class: string;
-}
-
-export function dropzone(node : HTMLElement, options: DropzoneOptions) {
-	let state: DropzoneState = {
+export function dropzone(node, options) {
+	let state = {
 		dropEffect: 'move',
-		dragover_class: 'droppable',
+		dragover_class: 'dropZone',
 		...options
 	};
 
-	function handle_dragenter(e: MouseEvent) {
+	function handle_dragenter(e) {
 		if (!(e.target instanceof HTMLElement)) return;
 		e.target.classList.add(state.dragover_class);
 	}
 
-	function handle_dragleave(e: MouseEvent) {
+	function handle_dragleave(e) {
 		if (!(e.target instanceof HTMLElement)) return;
 		e.target.classList.remove(state.dragover_class);
 	}
 
-	function handle_dragover(e: MouseEvent) {
+	function handle_dragover(e) {
 		e.preventDefault();
 		if (!e.dataTransfer) return;
 		e.dataTransfer.dropEffect = state.dropEffect;
 	}
 
-	function handle_drop(e: MouseEvent) {
+	function handle_drop(e) {
 		e.preventDefault();
-		if (!e.dataTransfer) return; z
+		if (!e.dataTransfer) return;
 		const data = e.dataTransfer.getData('text/plain');
 		if (!(e.target instanceof HTMLElement)) return;
 		e.target.classList.remove(state.dragover_class);
@@ -80,7 +72,7 @@ export function dropzone(node : HTMLElement, options: DropzoneOptions) {
 		update(options) {
 			state = {
 				dropEffect: 'move',
-				dragover_class: 'droppable',
+				dragover_class: 'dropZone',
 				...options
 			};
 		},

@@ -59,4 +59,14 @@ body {
 		user-select: none;
 	}
 
+/* I should get this from global.css */
+	:global(.dropZone) {
+		outline: 0.1rem solid var(--sk-theme-1);
+		outline-offset: 0.25rem;
+	}
+
+	:global(.dropZone) * {
+		pointer-events: none;
+	}	
+
 }

@@ -17,7 +17,8 @@ import _ from 'lodash'
 //#region types
 export type Int = number
 // Position on a board or relative position of a square in a tile
-export type Pos = { x: Int, y: Int }
+export type LPos = { x: Int, y: Int } // Logical position, in a matrix
+export type Pos = { x: Int, y: Int }  // Physical position, for unlaid tiles in a board
 // Seen as object with squares, Tiles, Boards and orient are
 // just a bidimentional array of integers
 // We assume tile to be connex so no empty rows or columns except 
@@ -33,7 +34,8 @@ type Orient = { matrix: Int[][], firstX: Int }
 //   pboard being a PBoard  an orientation is accessed as pboard.tileInfos[tileI].orients[orientI]
 type OrientIdx = { tileI: Int; orientI: Int }
 // A laid title has a position and an orientation 
-type laidTile = { pos: Pos; idx: OrientIdx }
+type laidTile = { pos: LPos; idx: OrientIdx }
+type unlaidTile = { tileI: Int, idx: OrientIdx, pos: Pos }
 // A tile has a name and a list of orients
 // As instances are laid, `instancesLeft` is decremented
 export type TileInfo = { orients: Orient[]; name?: string }
@@ -129,7 +131,7 @@ const down = { x: 0, y: 1 }
 const left = { x: -1, y: 0 }
 const up = { x: 0, y: -1 }
 const walk = [right, down, left, up]
-type Pos = { x: Int, y: Int }
+type LPos = { x: Int, y: Int }
 type Int = number
 
 // different from the perimeter walk, we fill right and down because up and left are already explored
@@ -139,13 +141,13 @@ export const polyhexFloodFillWalk = [down, right] // TBD
 
 
 export function connexParts(matrix: Int[][], pred: CellPredicate,
-    walk: Pos[] = polyominoFloodFillWalk): Pos[][] {
-    const connectedParts: Pos[][] = []
+    walk: LPos[] = polyominoFloodFillWalk): LPos[][] {
+    const connectedParts: LPos[][] = []
     let connexIdx = 0
     function key(x: Int, y: Int) {
         return `${x},${y}`
     }
-    function floodFill(x: Int, y: Int, connectedPart: Pos[]) {
+    function floodFill(x: Int, y: Int, connectedPart: LPos[]) {
         for (const dir of walk) {
             const cx = x + dir.x
             const cy = y + dir.y
@@ -164,7 +166,7 @@ export function connexParts(matrix: Int[][], pred: CellPredicate,
     }
     const map: Map<string, number> = new Map()
     matrix.map((row, y) => row.map((cell, x) => {
-        const connectedPart: Pos[] = []
+        const connectedPart: LPos[] = []
         if (pred(matrix, x, y) && !map.has(key(x, y))) {
             MaybeAddCell(x, y, connectedPart) // add first cell to `connectedPart`, not maybe here
             connexIdx++
@@ -522,14 +524,14 @@ function solve(pboard: PBoard): PBoard[] {
     const board = pboard.board
     let pos = { x: 0, y: 0 }
     if (board[pos.y][pos.x] !== 0) {
-        pos = nextFreeSquare(board) as Pos
+        pos = nextFreeSquare(board) as LPos
     }
 
     recSolve(pboard, pos, solutions, 0)
     return solutions
 }
 
-function recSolve(pboard: PBoard, pos: Pos, solutions: PBoard[], recLevel: Int): void {
+function recSolve(pboard: PBoard, pos: LPos, solutions: PBoard[], recLevel: Int): void {
     const board = pboard.board
     let idx: OrientIdx | null = { tileI: 0, orientI: 0 }
     while (idx !== null) {
@@ -572,7 +574,7 @@ function matrixMap<X>(matrix: Int[][], func: (valSquare: Int, x: Int, y: Int) =>
 
 type Predicate<T> = (value: T) => boolean;
 
-export function walkMatrixPred<T>(matrix: T[][], predicate: Predicate<T>): Pos | null {
+export function walkMatrixPred<T>(matrix: T[][], predicate: Predicate<T>): LPos | null {
     // Find the first matching row
     const row = _.find(matrix, row => _.some(row, predicate));
     if (row) {
@@ -585,7 +587,7 @@ export function walkMatrixPred<T>(matrix: T[][], predicate: Predicate<T>): Pos |
     return null;
 }
 
-function nextFreeSquare(board: Int[][]): Pos | null {
+function nextFreeSquare(board: Int[][]): LPos | null {
     return walkMatrixPred(board, val => val === 0)
 }
 
@@ -600,7 +602,7 @@ function matrixBool(matrix: Int[][], func: (valSquare: Int, x: Int, y: Int) => b
     return true
 }
 
-function isTilePlaceable(board: Int[][], orient: Orient, pos: Pos): boolean {
+function isTilePlaceable(board: Int[][], orient: Orient, pos: LPos): boolean {
     const boardWidth = board[0].length
     const boardHeight = board.length
     const tile = orient.matrix
@@ -621,7 +623,7 @@ function isTilePlaceable(board: Int[][], orient: Orient, pos: Pos): boolean {
     })
 }
 
-function placeTile(pboard: PBoard, pos: Pos, idx: OrientIdx) {
+function placeTile(pboard: PBoard, pos: LPos, idx: OrientIdx) {
     const orient: Orient = pboard.tilesInfo[idx.tileI].orients[idx.orientI]
     matrixMap(orient.matrix, (col, x, y) => {
         if (col !== 0) { pboard.board[y + pos.y][x + pos.x - orient.firstX] = 1 }
@@ -631,7 +633,7 @@ function placeTile(pboard: PBoard, pos: Pos, idx: OrientIdx) {
     return nextFreeSquare(pboard.board)
 }
 
-function rmTile(pboard: PBoard, pos: Pos, idx: OrientIdx): Pos {
+function rmTile(pboard: PBoard, pos: LPos, idx: OrientIdx): LPos {
     const orient: Orient = pboard.tilesInfo[idx.tileI].orients[idx.orientI]
     matrixMap(orient.matrix, (_, x, y) => {
         if (orient.matrix[y][x] !== 0) {
@@ -640,7 +642,7 @@ function rmTile(pboard: PBoard, pos: Pos, idx: OrientIdx): Pos {
     })
     pboard.laidTiles.pop()
     pboard.tilesLeft[idx.tileI]++
-    return nextFreeSquare(pboard.board) as Pos
+    return nextFreeSquare(pboard.board) as LPos
 }
 
 // function placeFTile(board: Board, ftile: FTile, pos: Pos, tileI: Int) {
@@ -724,7 +726,7 @@ export type Coords = { x: Int, y: Int, direction?: Direction }
 enum Direction { Right, Down, Left, Up }
 // type Movement = { x: Int, y: Int, direction: Direction }
 
-export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: Pos|Pos[]): string {
+export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: LPos|LPos[]): string {
     const perimeter = calcPerimeter(tile, pos);
     const points = perimeter.map(  (coord) => `${coord.x*squareSize},${coord.y*squareSize}` )
     return points.join(' ')
@@ -736,7 +738,7 @@ export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: Pos|P
 // or the connex component Pos[]
 // if not, we walk the board to find an occuptied square 
 // does not handle tiles with holes
-export function calcPerimeter(tile: Tile, firstSquare?: Pos| Pos[]): Pos[] {
+export function calcPerimeter(tile: Tile, firstSquare?: LPos| LPos[]): LPos[] {
     const tileSize = tile.length
 
     let pos: Coords = { x: 0, y: 0 }

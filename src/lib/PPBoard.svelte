@@ -8,9 +8,9 @@
 	import { dropzone } from '$lib/dnd'
 	import '$lib/global.css';
 
-	function on_dropzone(data: string , e: MouseEvent ) {
-		let parsedData = JSON.parse(data);
-		console.log("on_dropzone", parsedData, e);
+	function on_dropzone(dataAsText: string , e: MouseEvent ) {
+		let data = JSON.parse(dataAsText);
+		console.log("on_dropzone", data, e);
 		
 	}
 
@@ -18,7 +18,26 @@
 </script>
 
 
-<div use:dropzone={{on_dropzone }} >
-<Grid mode={GridMode.Play} squareSize={8} matrix={pBoard.board} 
-/>
+<div class="bboard" use:dropzone={on_dropzone }>
+<!-- <Grid mode={GridMode.Play} squareSize={8} matrix={pBoard.board} /> -->
 </div>
+
+<style>
+	.bboard {
+		width: 100px;
+		height: 100px;
+		background-color: lightgray;
+	}
+	:global(.dropZone) {
+		outline: 0.1rem solid var(--sk-theme-1);
+		outline-offset: 0.25rem;
+	}
+
+	:global(.dropZone) * {
+		pointer-events: none;
+	}	
+
+
+
+
+</style>

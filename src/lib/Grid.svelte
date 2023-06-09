@@ -1,10 +1,7 @@
-
-
 <script lang="ts">
 	// import '$lib/global.css'
-	import { dropzone } from '$lib/dnd'
 	import { connexParts, occupiedCell, perimeterPolylinePoints, dcolors } from '$lib/polyform';
-	import { type Int, type Pos, type Tile, type Matrix, GridMode } from '$lib/polyform';
+	import { type Int, type LPos, type Tile, type Matrix, GridMode } from '$lib/polyform';
 	import type { TileDropInfo } from '$lib/polyform';
 	import _ from 'lodash';
 	// import log from 'console';
@@ -15,7 +12,7 @@
 	export let mode: GridMode;
 	const cw = w * squareSize;
 	const ch = h * squareSize;
-	let connexParts_: Pos[][] = [];
+	let connexParts_: LPos[][] = [];
 	$: connexParts_ = connexParts(matrix, occupiedCell);
 
 	function gridrectClass(matrix: Int[][], y: number, x: number): string {
@@ -40,12 +37,12 @@
 		}
 	}
 	function handleKey(evt: KeyboardEvent) {}
-
 </script>
 
-<span class="contained" on:click={handleClick} on:keypress={handleKey} >
+<!-- <span class="contained transmit-events" on:click={handleClick} on:keypress={handleKey} > -->
+<span class="contained transmit-events">
 	<!-- Draw the grid proper	-->
-	<svg width={cw} height={ch} viewBox="0 0 {cw} {ch}">
+	<svg width={cw} height={ch} viewBox="0 0 {cw} {ch}" class="transmit-events">
 		{#each Array(h + 1) as _, i}
 			<line x1="0" y1={i * squareSize} x2={squareSize * w} y2={i * squareSize} class="gridline" />
 		{/each}
@@ -61,7 +58,7 @@
 					width={squareSize}
 					height={squareSize}
 					id="{x}-{y}"
-					class={gridrectClass(matrix, y, x)}
+					class="{gridrectClass(matrix, y, x)}  transmit-events"
 				/>
 			{/each}
 		{/each}
@@ -79,6 +76,9 @@
 </span>
 
 <style>
+	.transmit-events {
+		pointer-events: auto;
+	}
 	.noevents {
 		pointer-events: none;
 	}
@@ -114,14 +114,4 @@
 		opacity: 0.5;
 		fill: green;
 	}
-
-	:global(.droppable) {
-		outline: 0.1rem solid var(--sk-theme-1);
-		outline-offset: 0.25rem;
-	}
-
-	:global(.droppable) * {
-		pointer-events: none;
-	}
-
 </style>
