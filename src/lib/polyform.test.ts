@@ -2,17 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { connexParts, occupiedCell, polyominoFloodFillWalk, isWithinMatrix, calcPerimeter } from './polyform';
 
 import * as calc from '$lib/polyform'
-// import * as calc from '../../src/lib/polyform'
-// import { log } from 'console'
-import { it, describe, expect } from 'vitest'
 describe('sanity', function () {
     it('sanity', () => {
         expect(1).toBe(1)
     })
 })
-// describe('unsanity', function () {
-//     expect(1).toBe(2)
-// })
 
 describe('matrix utils', function () {
     it('walkMatrixPred', () => {
@@ -120,7 +114,7 @@ describe('polyominos', function () {
     // })
     it('generations', () => {
         const s = polyominos.map(t => t.length).join(',')
-        expect(s).toEqual('1,1,2,5,12')
+        expect(s).toEqual('1,1,2,5,12,35')
     })
 
 })
@@ -215,11 +209,4 @@ describe('connexity', () => {
         expect(connexParts(matrix, occupiedCell, polyominoFloodFillWalk)).toStrictEqual(expected)
 
     })
-    it('perimeter of a connex part', () => {
-        const matrix = [[0, 1, 1], [1, 0, 0], [0, 1, 1]]
-        const connexParts_ = connexParts(matrix, occupiedCell, polyominoFloodFillWalk)
-        const perimeter = calcPerimeter(matrix, connexParts_[0])
-        console.log(perimeter)
-        
-    });
 })
