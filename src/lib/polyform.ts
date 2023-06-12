@@ -32,9 +32,9 @@ type Orient = { matrix: Int[][], firstX: Int }
 // type FTile = [Pos]
 
 //   pboard being a PBoard  an orientation is accessed as pboard.tileInfos[tileI].orients[orientI]
-type OrientIdx = { tileI: Int; orientI: Int }
+export type OrientIdx = { tileI: Int; orientI: Int }
 // A laid title has a logical position and an orientation 
-type laidTile = { pos: LPos; idx: OrientIdx }
+export type LaidTile = { lpos: LPos; idx: OrientIdx }
 // An unlaid tile has a physical position and an orientation
 export type FloatingTile = { oidx: OrientIdx, pos: Pos }
 // A tile has an optional name and a list of orients
@@ -529,7 +529,40 @@ export function solutionToString(pboard: PBoard): string {
 
 }
 
-function solve(pboard: PBoard): PBoard[] {
+
+export function* genSolver(pboard: PBoard): Generator<PBoard, void, PBoard> {
+    const solutions: PBoard[] = []
+    const board = pboard.board
+    let pos = { x: 0, y: 0 }
+    if (board[pos.y][pos.x] !== 0) {
+        pos = nextFreeSquare(board) as LPos
+    }
+
+    yield* genRecSolve(pboard, pos, solutions, 0)
+}
+
+function* genRecSolve(pboard: PBoard, pos: LPos, solutions: PBoard[], recLevel: number): Generator<PBoard> {
+    const board = pboard.board
+    let idx: OrientIdx | null = { tileI: 0, orientI: 0 }
+    while (idx !== null) {
+        const tileinfo = pboard.tilesInfo[idx.tileI]
+        const orient = tileinfo.orients[idx.orientI]
+        if (pboard.tilesLeft[idx.tileI] && isTilePlaceable(board, orient, pos)) {
+            const nextPos = placeTile(pboard, pos, idx)
+            if (nextPos === null) {
+                const solution = _.cloneDeep(pboard)
+                yield solution
+            } else {
+                yield* genRecSolve(pboard, nextPos, solutions, recLevel + 1)
+            }
+            rmTile(pboard, pos, idx)
+        }
+        idx = nextOrient(pboard, idx)
+    }
+}
+
+
+export function solve(pboard: PBoard): PBoard[] {
     const solutions: PBoard[] = []
     const board = pboard.board
     let pos = { x: 0, y: 0 }
@@ -639,6 +672,7 @@ function placeTile(pboard: PBoard, pos: LPos, idx: OrientIdx) {
         if (col !== 0) { pboard.board[y + pos.y][x + pos.x - orient.firstX] = 1 }
     })
     pboard.laidTiles.push({ pos, idx })
+    // console.log(laidTilesToString(pboard))
     pboard.tilesLeft[idx.tileI]--
     return nextFreeSquare(pboard.board)
 }
@@ -852,7 +886,17 @@ export function getRelativeCoordinates(event, target) {
 export function tileFromI(pboard: PBoard, ti: Int, oi: Int = 0): Tile {
     return pboard.tilesInfo[ti].orients[oi].matrix;
 }
+export function tileFromIdx(pboard: PBoard, idx: OrientIdx): Tile {
+    return pboard.tilesInfo[idx.tileI].orients[idx.orientI].matrix;
+}
 
 export function nrOrientsFromI(pboard: PBoard, ti: Int): Int {
     return pboard.tilesInfo[ti].orients.length;
+}
+
+export function laidTilesToString(pboard: PBoard): string {
+    return pboard.laidTiles.map(
+        (lt: LaidTile) => console.log(lt)
+        // (lt: LaidTile) => `${lt.lpos.x},${lt.lpos.y},${lt.idx.tileI},${lt.idx.orientI}`
+    ).join(' ')
 }

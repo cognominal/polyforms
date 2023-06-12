@@ -7,10 +7,12 @@
 </svelte:head>
 
 <section>
-	<div>parts supposedly tested with PlayWright: <a href="Tests/Board">Tests/Board</a></div>
-	<h1>
-		The app will be there
-	</h1>
+	<div>
+		parts supposedly tested with PlayWright:
+		<a href="Tests/Board">Tests/Board</a>
+		<a href="Tests/Solver">Tests/Solver</a>
+	</div>
+	<h1>The app will be there</h1>
 </section>
 
 <style>
@@ -25,6 +27,4 @@
 	h1 {
 		width: 100%;
 	}
-
-	
 </style>

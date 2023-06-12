@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { connexParts, occupiedCell, polyominoFloodFillWalk, isWithinMatrix, calcPerimeter } from './polyform';
-
+import { connexParts, occupiedCell, polyominoFloodFillWalk, isWithinMatrix, calcPerimeter } from '$lib/polyform';
+import type { PBoard } from '$lib/polyform';
 import * as calc from '$lib/polyform'
 describe('sanity', function () {
     it('sanity', () => {
@@ -150,11 +150,11 @@ describe('solver', function () {
 
     })
     it('perimeter', () => {
-        function stringToPerimeter(s : string, expected : string) {
+        function stringToPerimeter(s: string, expected: string) {
             const squareSize = 8
             const tile = calc.stringToTile(s)
-            const perimeter = calc.calcPerimeter(tile)
-            const points = perimeter.map(  (coord) => `${coord.x*squareSize},${coord.y*squareSize}` )
+            const perimeter = calcPerimeter(tile)
+            const points = perimeter.map((coord) => `${coord.x * squareSize},${coord.y * squareSize}`)
             const pointsS = points.join(' ')
             // log(pointsS)
             expect(pointsS).toEqual(expected)
@@ -181,13 +181,13 @@ describe('solver', function () {
 
 
 describe('sanity', () => {
-	it('sanity', () => {
-		expect(true).toBe(true);
-	});
+    it('sanity', () => {
+        expect(true).toBe(true);
+    });
 });
 
 describe('isWithinMatrix', () => {
-	it('isWithinMatrix', () => {
+    it('isWithinMatrix', () => {
         const matrix = [[0]]
         expect(isWithinMatrix(matrix, 0, 0)).toBe(true)
         expect(isWithinMatrix(matrix, -1, 0)).toBe(false)
@@ -195,18 +195,38 @@ describe('isWithinMatrix', () => {
         expect(isWithinMatrix(matrix, 1, 0)).toBe(false)
         expect(isWithinMatrix(matrix, 0, 1)).toBe(false)
     }
-)})
+    )
+})
 
 
 describe('connexity', () => {
-	it('connexity', () => {
+    it('connexity', () => {
         const matrix = [[0, 1, 1], [1, 0, 0], [0, 1, 1]]
         const expected = [
-            [ { x: 1, y: 0 }, { x: 2, y: 0 } ],
-            [ { x: 0, y: 1 } ],
-            [ { x: 1, y: 2 }, { x: 2, y: 2 } ]
-          ]
+            [{ x: 1, y: 0 }, { x: 2, y: 0 }],
+            [{ x: 0, y: 1 }],
+            [{ x: 1, y: 2 }, { x: 2, y: 2 }]
+        ]
         expect(connexParts(matrix, occupiedCell, polyominoFloodFillWalk)).toStrictEqual(expected)
 
     })
 })
+
+describe('solver generator', () => {
+    it('solver generator', () => {
+        const pboard = calc.setPBoard(1, 1, 'x')
+        const gen = calc.genSolver(pboard)
+        let i = 0
+        let v: PBoard
+        while (gen.next().done === false) {
+            i++
+            v = gen.next().value as PBoard
+
+        }
+        expect(i).toEqual(1)
+        calc.laidTilesToString(v)
+        // console.log(calc.laidTilesToString(v));
+    })
+
+
+});
