@@ -50,12 +50,12 @@ describe('tile utils', function () {
     it('rotateTile', () => {
         const t1 = [[1, 2], [3, 4]]
         const rt1 = [[3, 1], [4, 2]]
-        expect(calc.rotnmino(t1)).toEqual(rt1)
+        expect(calc.rotateTile(t1)).toEqual(rt1)
         const t2 = [[0, 1, 2], [0, 3, 4], [0, 0, 0]]
         const rtn2 = [[3, 1, 0], [4, 2, 0], [0, 0, 0]]
         const rt2 = [[0, 0, 0], [0, 3, 1], [0, 4, 2]]
-        expect(calc.rotnmino(t2)).toEqual(rtn2)
-        expect(calc.rotnmino(t2, false)).toEqual(rt2)
+        expect(calc.rotateTile(t2)).toEqual(rtn2)
+        expect(calc.rotateTile(t2, false)).toEqual(rt2)
 
     })
     it('test calc.enlargeTile', () => {

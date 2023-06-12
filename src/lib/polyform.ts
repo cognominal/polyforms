@@ -212,13 +212,13 @@ export function maybeTileInfo(tile: Tile, tileIdx?: Int, orientToTileIdx?: Map<s
     if (orientToTileIdx.has(sn1)) return null
     orientToTileIdx.set(sn1, tileIdx as Int)
 
-    const n2 = rotnmino(n1)
-    const n3 = rotnmino(n2)
-    const n4 = rotnmino(n3)
+    const n2 = rotateTile(n1)
+    const n3 = rotateTile(n2)
+    const n4 = rotateTile(n3)
     const n5 = flipTile(n4)
-    const n6 = rotnmino(n5)
-    const n7 = rotnmino(n6)
-    const n8 = rotnmino(n7)
+    const n6 = rotateTile(n5)
+    const n7 = rotateTile(n6)
+    const n8 = rotateTile(n7)
     const newTiles = [n2, n3, n4, n5, n6, n7, n8]
     const filtered = newTiles.filter(t => {
         const s = tileToString(t)
@@ -435,7 +435,7 @@ export function flipTile(o: Tile, normalize = true): Tile {
     return n;
 }
 
-export function rotnmino(o: Tile, normalize = true): Tile {
+export function rotateTile(o: Tile, normalize = true): Tile {
     let n: Tile = newTile(o)
     const sz = o[0].length
     for (let i = 0; i < sz; i++) {
