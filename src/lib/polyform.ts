@@ -720,6 +720,9 @@ export function calcPolyominos(lastGenNr: Int): TileInfo[][] {
     return polyominos
 }
 
+export const  nOminosTI = calcPolyominos(6)
+export const  pentaminosTI: TileInfo[] = nOminosTI[4]
+
 export function solveRectangleToString(height: Int, width: Int, tiles: TileAsString[] | TileAsString | TileInfo[]): string {
     return solveRectangle(width, height, tiles).map((pb) => solutionToString(pb)).join('\n')
 }
