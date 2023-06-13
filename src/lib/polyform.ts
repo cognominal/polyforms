@@ -67,7 +67,7 @@ export type PBoard = {
 type TileAsString = { s: string, nr: Int } | string
 type TileInstance = { tile: Tile, nr: Int } // nr is the number of instances of the tile
 
-type ConnectedParts = Map<string, Int>
+// type ConnectedParts = Map<string, Int>
 export enum GridMode { TileEditor, BoardEditor, Play }
 export type TileDropInfo = { tileI: Int, pboard: PBoard }
 
@@ -75,7 +75,7 @@ export type TileDropInfo = { tileI: Int, pboard: PBoard }
 export const dcolors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0',
     '#f032e6', '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8',
     '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
-enum PolyformType { Polyomino, Polyabolo, Polyiamond, Polyhex }
+// enum PolyformType { Polyomino, Polyabolo, Polyiamond, Polyhex }
 
 
 //#endregion
@@ -207,6 +207,7 @@ export function calcTileInfo(tile: Tile): TileInfo { return maybeTileInfo(tile) 
 
 export function maybeTileInfo(tile: Tile, tileIdx?: Int, orientToTileIdx?: Map<string, Int>): TileInfo | null {
     const n1 = normalizeTile(tile)
+
     const sn1 = tileToString(n1)
     if (!orientToTileIdx) orientToTileIdx = new Map<string, Int>()
     if (orientToTileIdx.has(sn1)) return null
@@ -293,10 +294,17 @@ export function calcGenPolyominos(tilesInfo: TileInfo[]): TileInfo[] {
  * @param size size of tile or another tile from which to copy size
  * @returns new tile of specified size
  */
-export function newTile(size: Int | Tile): Tile {
+export function newTile(w: Int | Tile, h : Int = w): Tile {
     // determine size of new tile
-    const sz: Int = typeof size === 'number' ? size : size[0].length
-    return _.range(sz).map(() => Array(sz).fill(0))
+    let w1: Int, h1: Int
+    if (typeof w === 'number') {
+        w1 = w
+        h1 = h
+    } else {
+        w1 = w.length
+        h1 = w[0].length
+    }
+    return _.range(h1).map(() => Array(w1).fill(0))
 }
 
 export function copyTile(t: Tile): Tile {
@@ -313,11 +321,11 @@ export function copyTile(t: Tile): Tile {
 }
 
 export function eqtiles(a: Tile, b: Tile): boolean {
-    a = normalizeTile(a)
-    b = normalizeTile(b)
+    a = trimTile(a)
+    b = trimTile(b)
     if (a.length !== b.length) return false
+    if (a[0].length !== b[0].length) return false
     for (let i = 0; i < a.length; i++) {
-        if (a[i].length !== b[i].length) return false
         for (let j = 0; j < a[i].length; j++) {
             if (a[i][j] !== b[i][j]) return false
         }
@@ -370,11 +378,10 @@ export function enlargeTile(tile: Tile): Tile {
     return enlargedTile
 }
 
-// XXXX make it square
 // remove borders of zeros around a tile
 // `eqTile` return false for tiles with same content but shifted so
-// use stripTile before comparaison
-export function stripTile(tile: Tile): Tile {
+// use `trimTile` before comparaison
+export function trimTile(tile: Tile): Tile {
     const t = copyTile(tile)
     let firstColumn = t.length
     let lastColumn = 0
@@ -422,29 +429,31 @@ export function stripTile(tile: Tile): Tile {
 
 
 export function flipTile(o: Tile, normalize = true): Tile {
-    let n: Tile = newTile(o)
-    const sz = o[0].length
-    for (let i = 0; i < sz; i++) {
-        for (let j = 0; j < sz; j++) {
-            n[i][j] = o[sz - 1 - i][j];
+    const h = o.length
+    const w = o[0].length
+    let n: Tile = newTile(h, w)
+    for (let i = 0; i < h; i++) {
+        for (let j = 0; j < w; j++) {
+            n[j][i] = o[i][j];
         }
     }
     if (normalize) {
-        n = normalizeTile(n)
+        n = trimTile(n)
     }
     return n;
 }
 
 export function rotateTile(o: Tile, normalize = true): Tile {
-    let n: Tile = newTile(o)
-    const sz = o[0].length
-    for (let i = 0; i < sz; i++) {
-        for (let j = 0; j < sz; j++) {
-            n[i][j] = o[sz - 1 - j][i];
+    const h = o.length
+    const w = o[0].length
+    let n: Tile = newTile(h, w)
+    for (let i = 0; i < w; i++) {
+        for (let j = 0; j < h; j++) {
+            n[i][j] = o[h - 1 - j][i];
         }
     }
     if (normalize) {
-        n = normalizeTile(n)
+        n = trimTile(n)
     }
 
     return n
@@ -672,7 +681,6 @@ function placeTile(pboard: PBoard, pos: LPos, idx: OrientIdx) {
         if (col !== 0) { pboard.board[y + pos.y][x + pos.x - orient.firstX] = 1 }
     })
     pboard.laidTiles.push({ pos, idx })
-    // console.log(laidTilesToString(pboard))
     pboard.tilesLeft[idx.tileI]--
     return nextFreeSquare(pboard.board)
 }
@@ -731,7 +739,7 @@ export function mkTiles(pb: PBoard, tas: TileAsString[]): PBoard {
     return pb
 }
 
-// We copytilesInfo because we may modify it
+// We copy tilesInfo because we may modify it
 export function setPBoard(width: Int, height: Int, ti: TileAsString[] | TileAsString | TileInfo[]): PBoard {
     const board: Int[][] = new Array(height).fill(0).map(() => new Array(width).fill(0))
     let tilesLeft: Int[] = []
@@ -896,7 +904,12 @@ export function nrOrientsFromI(pboard: PBoard, ti: Int): Int {
 
 export function laidTilesToString(pboard: PBoard): string {
     return pboard.laidTiles.map(
-        (lt: LaidTile) => console.log(lt)
-        // (lt: LaidTile) => `${lt.lpos.x},${lt.lpos.y},${lt.idx.tileI},${lt.idx.orientI}`
-    ).join(' ')
+    //    (lt: LaidTile) => console.log(JSON.stringify(lt))
+        
+        (lt: LaidTile) => `${lt.pos.x},${lt.pos.y},${lt.idx.tileI},${lt.idx.orientI}`
+    ).join(' ') + '\n'
+}
+
+export function pboardToString(pboard: PBoard, s: string): string {
+    console.log(s, pboard.laidTiles)
 }

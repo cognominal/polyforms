@@ -15,9 +15,9 @@
 
 </script>
 
-<PPBoard pboard={simpleProblem()} />
+<!-- <PPBoard pboard={simpleProblem()} />
 <hr/>
 {#each solverIterator() as item}
 <PPBoard pboard={item} />
 
-{/each}
+{/each} -->

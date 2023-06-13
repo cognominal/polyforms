@@ -16,6 +16,9 @@
 	let cellSize = 8;
 	let boardSize = w * cellSize;
 
+
+	const boardSizes = [[1, 1 ],[1, 2], [2, 3], [4,5], [6,10] ]
+	const pboards = boardSizes.map(([w, h], i) => setPBoard(w, h, ti[i]))
 	let pboard: PBoard = setPBoard(10, 6, pentaminoTi);
 
 	function simpleProblem() {
@@ -56,10 +59,12 @@
 	instances of a tile, the number of instances is displayed in the tile (correct CSS TBD). The tile
 	board is filled with pentaminoes created by the generator of polyominos.
 </p>
-<div>
-	<TileBoard {pboard} {cellSize} />
-	<PPBoard {pboard} />
-</div>
+{#each pboards as pboard, i}
+	<div>
+		<TileBoard {pboard} {cellSize} />
+		<PPBoard {pboard} />
+	</div>
+{/each}
 
 <p>Experimenting with tile flip/rotation transition</p>
 
