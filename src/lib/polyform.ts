@@ -550,7 +550,7 @@ export function* genSolver(pboard: PBoard): Generator<PBoard, void, PBoard> {
     yield* genRecSolve(pboard, pos, solutions, 0)
 }
 
-function* genRecSolve(pboard: PBoard, pos: LPos, solutions: PBoard[], recLevel: number): Generator<PBoard> {
+function* genRecSolve(pboard: PBoard, pos: LPos, recLevel: number): Generator<PBoard> {
     const board = pboard.board
     let idx: OrientIdx | null = { tileI: 0, orientI: 0 }
     while (idx !== null) {
@@ -562,7 +562,7 @@ function* genRecSolve(pboard: PBoard, pos: LPos, solutions: PBoard[], recLevel: 
                 const solution = _.cloneDeep(pboard)
                 yield solution
             } else {
-                yield* genRecSolve(pboard, nextPos, solutions, recLevel + 1)
+                yield* genRecSolve(pboard, nextPos,recLevel + 1)
             }
             rmTile(pboard, pos, idx)
         }
