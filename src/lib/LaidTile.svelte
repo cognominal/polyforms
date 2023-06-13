@@ -1,11 +1,18 @@
 <script lang="ts">
-	import { calcPerimeter, perimeterPolylinePoints, tileFromIdx, nrOrientsFromI } from '$lib/polyform';
+	import {
+		calcPerimeter,
+		perimeterPolylinePoints,
+		tileFromIdx,
+		nrOrientsFromI,
+		firstXFromIdx
+	} from '$lib/polyform';
 	import type { LaidTile, Int, LPos, Pos, PBoard, TileInfo, FloatingTile } from '$lib/polyform';
-    export let ltile: LaidTile;
-	// export let tileI: Int = 0;
-	// export let orientI: Int = 0;
+	export let ltile: LaidTile;
 	export let pboard: PBoard;
 	export let squareSize = 8;
+	let posx = (ltile.pos.x-firstXFromIdx(pboard, ltile.idx)) * squareSize;
+	let posy = ltile.pos.y * squareSize;
+
 	let tile = tileFromIdx(pboard, ltile.idx);
 	let boardSize = 50; // tile[0].length *squareSize
 
@@ -14,23 +21,28 @@
 	}
 </script>
 
-
-<polyline class="tile" points={perimeterPolylinePoints(tile, squareSize)} />
+<polyline
+	style="--posx:{posx};--posy:{posy}"
+	class="tile"
+	points={perimeterPolylinePoints(tile, squareSize)}
+/>
 
 <style>
-.tile {
-    fill: lightblue;
-    stroke: red;
-    stroke-width: 2;
-    display: inline-block;
+	.tile {
+		fill: lightblue;
+		stroke: red;
+		stroke-width: 2;
+		display: inline-block;
+		/* same transform but with calc() to specify pixel init */
+		transform: translate(calc(var(--posx) * 1px), calc(var(--posy) * 1px));
+		/* transition: transform 0.5s; */
+	}
 
-}
-
-/* .draggable {
+	/* .draggable {
     cursor: move;
 } */
 
-.tile:hover {
-    fill: blue;
-}
+	.tile:hover {
+		fill: blue;
+	}
 </style>

@@ -34,7 +34,7 @@ type Orient = { matrix: Int[][], firstX: Int }
 //   pboard being a PBoard  an orientation is accessed as pboard.tileInfos[tileI].orients[orientI]
 export type OrientIdx = { tileI: Int; orientI: Int }
 // A laid title has a logical position and an orientation 
-export type LaidTile = { lpos: LPos; idx: OrientIdx }
+export type LaidTile = { pos: LPos; idx: OrientIdx }
 // An unlaid tile has a physical position and an orientation
 export type FloatingTile = { oidx: OrientIdx, pos: Pos }
 // A tile has an optional name and a list of orients
@@ -800,7 +800,7 @@ export function calcPerimeter(tile: Tile, firstSquare?: LPos | LPos[]): LPos[] {
     let pos: Coords = { x: 0, y: 0 }
     let plPos: Coords = { x: 0, y: 0 }
     let direction: Direction = Direction.Right;
-    let firstSquarePos: Coords | null =
+    let firstSquarePos: Coords | null = 
         firstSquare ? Array.isArray(firstSquare) ? firstSquare[0] : firstSquare : null
     let firstSquareDirection = Direction.Right
     const svgPolyline: Coords[] = []
@@ -896,6 +896,11 @@ export function tileFromI(pboard: PBoard, ti: Int, oi: Int = 0): Tile {
 }
 export function tileFromIdx(pboard: PBoard, idx: OrientIdx): Tile {
     return pboard.tilesInfo[idx.tileI].orients[idx.orientI].matrix;
+}
+
+export function firstXFromIdx(pboard: PBoard, idx: OrientIdx) : Int {
+    return pboard.tilesInfo[idx.tileI].orients[idx.orientI].firstX;
+    
 }
 
 export function nrOrientsFromI(pboard: PBoard, ti: Int): Int {

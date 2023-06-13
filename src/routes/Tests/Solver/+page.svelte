@@ -8,7 +8,7 @@
 		return boards[0];
 	}
 	function solverIterator() {
-		const pboard = setPBoard(2, 2, ['x', 'xx\nx']);
+		const pboard = setPBoard(3, 2, [ {s: 'x', nr: 3}, 'xx\nx']);
 		return genSolver(pboard);
 	}
 
@@ -23,7 +23,7 @@
 	}
 </script>
 
-<PPBoard pboard={simpleProblem()} />
+<!-- <PPBoard pboard={simpleProblem()} /> -->
 <hr />
 {#each pboards as pboard}
 	<div><PPBoard {pboard} /></div>
