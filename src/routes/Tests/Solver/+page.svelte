@@ -12,12 +12,19 @@
 		return genSolver(pboard);
 	}
 
-
+	let gen = solverIterator();
+	let pboards: PBoard[] = [];
+	let result = gen.next();
+	let s = '';
+	let v: PBoard;
+	while (result.done === false) {
+		pboards.push(result.value);
+		result = gen.next();
+	}
 </script>
 
-<!-- <PPBoard pboard={simpleProblem()} />
-<hr/>
-{#each solverIterator() as item}
-<PPBoard pboard={item} />
-
-{/each} -->
+<PPBoard pboard={simpleProblem()} />
+<hr />
+{#each pboards as pboard}
+	<div><PPBoard {pboard} /></div>
+{/each}
