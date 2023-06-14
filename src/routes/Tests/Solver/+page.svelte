@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { setPBoard, solve, genSolver } from '$lib/polyform';
-	import type { Tile, Int, LPos, Pos, PBoard, TileInfo, FloatingTile } from '$lib/polyform';
+	import type { Tile, Int, LPos, Pos, PBoard, TileInfo, FloatingTileInfo } from '$lib/polyform';
 	import PPBoard from '$lib/PPBoard.svelte';
 	function simpleProblem() {
 		const pboard = setPBoard(2, 2, ['x', 'xx\nx']);
@@ -8,7 +8,7 @@
 		return boards[0];
 	}
 	function solverIterator() {
-		const pboard = setPBoard(3, 2, [ {s: 'x', nr: 3}, 'xx\nx']);
+		const pboard = setPBoard(3, 4, [{ s: 'xxx', nr: 2 }, { s: 'x', nr: 3 }, 'xx\nx']);
 		return genSolver(pboard);
 	}
 
@@ -26,5 +26,5 @@
 <!-- <PPBoard pboard={simpleProblem()} /> -->
 <hr />
 {#each pboards as pboard}
-	<div><PPBoard {pboard} /></div>
+	<div><PPBoard {pboard} DEBUG={true} /></div>
 {/each}

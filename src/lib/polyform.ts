@@ -36,7 +36,7 @@ export type OrientIdx = { tileI: Int; orientI: Int }
 // A laid title has a logical position and an orientation 
 export type LaidTile = { pos: LPos; idx: OrientIdx }
 // An unlaid tile has a physical position and an orientation
-export type FloatingTile = { oidx: OrientIdx, pos: Pos }
+export type FloatingTileInfo = { oidx: OrientIdx, pos: Pos }
 // A tile has an optional name and a list of orients
 export type TileInfo = { orients: Orient[]; name?: string }
 
@@ -53,7 +53,7 @@ export type TileInfo = { orients: Orient[]; name?: string }
 export type PBoard = {
     // associated svelte component : `PPBoard`
     board: Int[][] // 0 =e empty, 1 = filled
-    floatingTiles: FloatingTile[]
+    floatingTiles: FloatingTileInfo[]
     laidTiles: laidTile[]
 
     // Associated svelte component : `TileBoard`
@@ -294,7 +294,7 @@ export function calcGenPolyominos(tilesInfo: TileInfo[]): TileInfo[] {
  * @param size size of tile or another tile from which to copy size
  * @returns new tile of specified size
  */
-export function newTile(w: Int | Tile, h : Int = w): Tile {
+export function newTile(w: Int | Tile, h: Int = w): Tile {
     // determine size of new tile
     let w1: Int, h1: Int
     if (typeof w === 'number') {
@@ -539,18 +539,20 @@ export function solutionToString(pboard: PBoard): string {
 }
 
 
-export function* genSolver(pboard: PBoard): Generator<PBoard, void, PBoard> {
-    const solutions: PBoard[] = []
+export function* genSolver(pboard: PBoard, yieldOnLaidTiles: Int = -1): Generator<PBoard, void, PBoard> {
     const board = pboard.board
     let pos = { x: 0, y: 0 }
+    if (yieldOnLaidTiles === -1) {
+        yieldOnLaidTiles = pboard.tilesLeft.reduce((acc, nr) => acc + nr, 0)
+    }
     if (board[pos.y][pos.x] !== 0) {
         pos = nextFreeSquare(board) as LPos
     }
 
-    yield* genRecSolve(pboard, pos, solutions, 0)
+    yield* genRecSolve(pboard, pos, 0, yieldOnLaidTiles)
 }
 
-function* genRecSolve(pboard: PBoard, pos: LPos, recLevel: number): Generator<PBoard> {
+function* genRecSolve(pboard: PBoard, pos: LPos, recLevel: number, yieldOnLaidTiles: Int): Generator<PBoard> {
     const board = pboard.board
     let idx: OrientIdx | null = { tileI: 0, orientI: 0 }
     while (idx !== null) {
@@ -558,11 +560,12 @@ function* genRecSolve(pboard: PBoard, pos: LPos, recLevel: number): Generator<PB
         const orient = tileinfo.orients[idx.orientI]
         if (pboard.tilesLeft[idx.tileI] && isTilePlaceable(board, orient, pos)) {
             const nextPos = placeTile(pboard, pos, idx)
-            if (nextPos === null) {
+            if (nextPos === null || recLevel >= yieldOnLaidTiles) {
                 const solution = _.cloneDeep(pboard)
+                console.log(`yielding solution ${recLevel} >= ${yieldOnLaidTiles}`)
                 yield solution
             } else {
-                yield* genRecSolve(pboard, nextPos,recLevel + 1)
+                yield* genRecSolve(pboard, nextPos, recLevel + 1, yieldOnLaidTiles)
             }
             rmTile(pboard, pos, idx)
         }
@@ -720,8 +723,8 @@ export function calcPolyominos(lastGenNr: Int): TileInfo[][] {
     return polyominos
 }
 
-export const  nOminosTI = calcPolyominos(6)
-export const  pentaminosTI: TileInfo[] = nOminosTI[4]
+export const nOminosTI = calcPolyominos(6)
+export const pentaminosTI: TileInfo[] = nOminosTI[4]
 
 export function solveRectangleToString(height: Int, width: Int, tiles: TileAsString[] | TileAsString | TileInfo[]): string {
     return solveRectangle(width, height, tiles).map((pb) => solutionToString(pb)).join('\n')
@@ -785,7 +788,7 @@ export type Coords = { x: Int, y: Int, direction?: Direction }
 enum Direction { Right, Down, Left, Up }
 // type Movement = { x: Int, y: Int, direction: Direction }
 
-export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos?: LPos | LPos[]): string {
+export function perimeterPolylinePoints(tile: Tile, squareSize: Int, pos: LPos | LPos[]): string {
     const perimeter = calcPerimeter(tile, pos);
     const points = perimeter.map((coord) => `${coord.x * squareSize},${coord.y * squareSize}`)
     return points.join(' ')
@@ -803,7 +806,7 @@ export function calcPerimeter(tile: Tile, firstSquare?: LPos | LPos[]): LPos[] {
     let pos: Coords = { x: 0, y: 0 }
     let plPos: Coords = { x: 0, y: 0 }
     let direction: Direction = Direction.Right;
-    let firstSquarePos: Coords | null = 
+    let firstSquarePos: Coords | null =
         firstSquare ? Array.isArray(firstSquare) ? firstSquare[0] : firstSquare : null
     let firstSquareDirection = Direction.Right
     const svgPolyline: Coords[] = []
@@ -901,9 +904,9 @@ export function tileFromIdx(pboard: PBoard, idx: OrientIdx): Tile {
     return pboard.tilesInfo[idx.tileI].orients[idx.orientI].matrix;
 }
 
-export function firstXFromIdx(pboard: PBoard, idx: OrientIdx) : Int {
+export function firstXFromIdx(pboard: PBoard, idx: OrientIdx): Int {
     return pboard.tilesInfo[idx.tileI].orients[idx.orientI].firstX;
-    
+
 }
 
 export function nrOrientsFromI(pboard: PBoard, ti: Int): Int {
@@ -912,8 +915,8 @@ export function nrOrientsFromI(pboard: PBoard, ti: Int): Int {
 
 export function laidTilesToString(pboard: PBoard): string {
     return pboard.laidTiles.map(
-    //    (lt: LaidTile) => console.log(JSON.stringify(lt))
-        
+        //    (lt: LaidTile) => console.log(JSON.stringify(lt))
+
         (lt: LaidTile) => `${lt.pos.x},${lt.pos.y},${lt.idx.tileI},${lt.idx.orientI}`
     ).join(' ') + '\n'
 }

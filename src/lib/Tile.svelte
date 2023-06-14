@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { calcPerimeter, perimeterPolylinePoints, tileFromI, nrOrientsFromI } from '$lib/polyform';
-	import type { Tile, Int, LPos, Pos, PBoard, TileInfo, FloatingTile } from '$lib/polyform';
+	import type { Tile, Int, LPos, Pos, PBoard, TileInfo, FloatingTileInfo } from '$lib/polyform';
 	export let tileI: Int = 0;
 	export let orientI: Int = 0;
 	export let pboard: PBoard;
@@ -9,7 +9,6 @@
 
 	function handleClick(evt: MouseEvent) {
 		orientI = (orientI + 1) % nrOrientsFromI(pboard, tileI);
-
 	}
 </script>
 

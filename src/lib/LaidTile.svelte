@@ -6,11 +6,11 @@
 		nrOrientsFromI,
 		firstXFromIdx
 	} from '$lib/polyform';
-	import type { LaidTile, Int, LPos, Pos, PBoard, TileInfo, FloatingTile } from '$lib/polyform';
+	import type { LaidTile, Int, LPos, Pos, PBoard, TileInfo, FloatingTileInfo } from '$lib/polyform';
 	export let ltile: LaidTile;
 	export let pboard: PBoard;
 	export let squareSize = 8;
-	let posx = (ltile.pos.x-firstXFromIdx(pboard, ltile.idx)) * squareSize;
+	let posx = (ltile.pos.x - firstXFromIdx(pboard, ltile.idx)) * squareSize;
 	let posy = ltile.pos.y * squareSize;
 
 	let tile = tileFromIdx(pboard, ltile.idx);

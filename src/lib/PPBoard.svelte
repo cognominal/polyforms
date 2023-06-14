@@ -1,7 +1,13 @@
 <script lang="ts">
-	import { calcPolyominos, GridMode, tileFromIdx, calcPerimeter } from '$lib/polyform';
-	import type { TileInfo, Int, PBoard, FloatingTile } from '$lib/polyform';
-	import Polyform from './Polyform.svelte';
+	import {
+		calcPolyominos,
+		GridMode,
+		tileFromIdx,
+		calcPerimeter,
+		perimeterPolylinePoints
+	} from '$lib/polyform';
+	import type { TileInfo, Int, PBoard, FloatingTileInfo as FloatingTileInfo } from '$lib/polyform';
+	import FloatingTile from './FloatingTile.svelte';
 	import Grid from './Grid.svelte';
 	export let pboard: PBoard;
 	import type { TileDropInfo } from '$lib/polyform';
@@ -14,12 +20,17 @@
 	export let squareSize = 15;
 	let w = pboard.board[0].length * squareSize;
 	let h = pboard.board.length * squareSize;
-	const DEBUG = true
+	export let DEBUG = false;
+
+	$: {
+		w = pboard.board[0].length * squareSize;
+		h = pboard.board.length * squareSize;
+	}
 
 	function on_dropzone(dataAsText: string, e: MouseEvent) {
 		let data = JSON.parse(dataAsText);
 		console.log('on_dropzone', data, e);
-		let floatingTile: FloatingTile = {
+		let floatingTile: FloatingTileInfo = {
 			oidx: { tileI: data.tileI, orientI: 0 },
 			pos: {
 				x: e.clientX,
@@ -30,14 +41,25 @@
 		pboard.tilesLeft[data.tileI]--;
 		pboard = pboard;
 	}
+
+	function on_mouseover(e: MouseEvent) {
+		console.log('on_mouseover', e);
+	}
 </script>
 
-
 <hr />
-<div class="bboard" use:dropzone={{ on_dropzone }} style="--w:{w};--h:{h}">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div
+	class="bboard"
+	use:dropzone={{ on_dropzone }}
+	on:mouseover={on_mouseover}
+	on:keypress={(e) => 0}
+	on:focus={(e) => 0}
+	style="--w:{w};--h:{h}"
+>
 	<svg width={w} height={h} viewBox="0 0 {w} {h}">
 		{#each pboard.floatingTiles as ftile, i}
-			<Polyform {pboard} {ftile} />
+			<FloatingTile {pboard} {ftile} />
 		{/each}
 		{#each pboard.laidTiles as ltile}
 			<LaidTile {ltile} {squareSize} {pboard} />
@@ -47,16 +69,16 @@
 	<!-- <Grid mode={GridMode.Play} squareSize={8} matrix={pBoard.board} /> -->
 </div>
 {#if DEBUG}
-<div class="tilesinfo">
-	{#each pboard.laidTiles as ltile}
-		<div>{JSON.stringify(ltile)}
-			 {JSON.stringify(tileFromIdx(pboard, ltile.idx))}
-			 {ltile.idx.tileI == 1 &&  ltile.idx.orientI == 2 ? 
-			 JSON.stringify(calcPerimeter(tileFromIdx(pboard, ltile.idx))) :''
-			 }
+	<div class="tilesinfo">
+		{#each pboard.laidTiles as ltile}
+			<div>
+				{JSON.stringify(ltile)}
+				{JSON.stringify(tileFromIdx(pboard, ltile.idx))}
+				{JSON.stringify(calcPerimeter(tileFromIdx(pboard, ltile.idx)))}
+				<!-- {perimeterPolylinePoints(tileFromIdx(pboard, ltile.idx), squareSize, ltile.pos)} -->
 			</div>
-	{/each}
-</div>
+		{/each}
+	</div>
 {/if}
 
 <style>
@@ -72,5 +94,4 @@
 		display: inline-block;
 		font-size: 0.5em;
 	}
-
 </style>
