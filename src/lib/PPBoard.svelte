@@ -47,7 +47,7 @@
 	}
 </script>
 
-<hr />
+
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="bboard"

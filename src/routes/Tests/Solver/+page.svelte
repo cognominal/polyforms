@@ -14,17 +14,31 @@
 
 	let gen = solverIterator();
 	let pboards: PBoard[] = [];
+	let debug: boolean[] = [];
 	let result = gen.next();
 	let s = '';
 	let v: PBoard;
 	while (result.done === false) {
 		pboards.push(result.value);
+		debug.push(false);
 		result = gen.next();
 	}
 </script>
 
-<!-- <PPBoard pboard={simpleProblem()} /> -->
-<hr />
-{#each pboards as pboard}
-	<div><PPBoard {pboard} DEBUG={true} /></div>
+
+{#each pboards as pboard, i}
+	<hr/>
+	<span id="label">
+	{i}
+	<label>
+		<input type="checkbox" bind:checked={debug[i]} />
+		debug
+	</label>
+	</span>
+	<div><PPBoard {pboard} DEBUG={debug[i]} /></div>
 {/each}
+
+<!-- <style>
+	label { display: none; }
+	label:hover {  display: inline-block; }
+</style> -->
