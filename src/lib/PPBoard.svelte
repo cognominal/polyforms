@@ -6,7 +6,7 @@
 		calcPerimeter,
 		perimeterPolylinePoints
 	} from '$lib/polyform';
-	import type { TileInfo, Int, PBoard, FloatingTileInfo as FloatingTileInfo } from '$lib/polyform';
+	import type { TileInfo, Int, PBoard, FloatingTileInfo, Tile } from '$lib/polyform';
 	import FloatingTile from './FloatingTile.svelte';
 	import Grid from './Grid.svelte';
 	export let pboard: PBoard;
@@ -45,6 +45,16 @@
 	function on_mouseover(e: MouseEvent) {
 		console.log('on_mouseover', e);
 	}
+
+	function debugInfos(ltile: LaidTile) {
+		const tile : Tile = tileFromIdx(pboard, ltile.idx)
+		const strfy = JSON.stringify
+		return strfy(tile) + 
+		perimeterPolylinePoints(tile, squareSize)
+	// 			<!-- {perimeterPolylinePoints(tileFromIdx(pboard, ltile.idx), squareSize, ltile.pos)} -->
+
+	// })
+	}
 </script>
 
 
@@ -72,10 +82,7 @@
 	<div class="tilesinfo">
 		{#each pboard.laidTiles as ltile}
 			<div>
-				{JSON.stringify(ltile)}
-				{JSON.stringify(tileFromIdx(pboard, ltile.idx))}
-				{JSON.stringify(calcPerimeter(tileFromIdx(pboard, ltile.idx)))}
-				<!-- {perimeterPolylinePoints(tileFromIdx(pboard, ltile.idx), squareSize, ltile.pos)} -->
+				{debugInfos(ltile)}
 			</div>
 		{/each}
 	</div>
