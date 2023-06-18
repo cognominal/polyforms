@@ -2,6 +2,9 @@
 	import { page } from '$app/stores';
 	import logo from '$lib/images/svelte-logo.svg';
 	import github from '$lib/images/github.svg';
+
+	let links = [ [ 'Home', '/'],  ['About','/about' ], 
+	 'Tests/Board', 'Tests/Solver', 'Tests/Tick', 'Tests/SVG']
 </script>
 
 <header>
@@ -16,21 +19,18 @@
 			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 		</svg>
 		<ul>
-			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">Home</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
-				<a href="/about">About</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/Tests/Board' ? 'page' : undefined}>
-				<a href="/Tests/Board">test board</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/Tests/Solver' ? 'page' : undefined}>
-				<a href="/Tests/Solver">test solver</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/Tests/Tick`' ? 'page' : undefined}>
-				<a href="/Tests/Tick">test tick</a>
-			</li>
+			{#each links as link}
+				{#if typeof link === 'string'}
+					<li aria-current={$page.url.pathname === '/'+link ? 'page' : undefined}>
+						<a href="/{link}">{link.substring(6)}</a>
+					</li>
+				{:else}
+					<li aria-current={$page.url.pathname === link[1] ? 'page' : undefined}>
+						<a href={link[1]}>{link[0]}</a>
+					</li>
+				{/if}
+			{/each}	
+
 
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
