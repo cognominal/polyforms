@@ -8,9 +8,12 @@
 	import Grid from '$lib/Grid.svelte';
 	import TileBoard from '$lib/TileBoard.svelte';
 	import PPBoard from '$lib/PPBoard.svelte';
+	import _ from 'lodash'
 	let ti: TileInfo[][] = calcPolyominos(6);
 	let pentaminoTi = ti[4];
 	let tile = pentaminoTi[0].orients[0].matrix;
+	let tile1 = _.cloneDeep(tile)
+
 	let w = 8;
 	let h = 8;
 	let cellSize = 8;
@@ -28,19 +31,6 @@
 
 	}
 
-	// function _simpleProblem() {
-	// const pboard = setPBoard(1, 1, 'x')
-    //     const gen = genSolver(pboard)
-    //     let i = 0
-    //     let v: PBoard
-    //     while (gen.next().done === false) {
-    //         i++
-    //         v = gen.next().value as PBoard
-
-    //     }
-	// 	return v as PBoard
-	// }
-	// simpleProblem()
 </script>
 
 <p>Board editor. Click to toggle between a free or a forbidden cell</p>
@@ -49,7 +39,7 @@
 </div>
 <p>Tile editor. A tile must be connex</p>
 <div class="container" style="height:{boardSize}px;">
-	<Grid squareSize={cellSize} matrix={tile} mode={GridMode.TileEditor} />
+	<Grid squareSize={cellSize} matrix={tile1} mode={GridMode.TileEditor} />
 </div>
 
 <hr />
@@ -61,6 +51,7 @@
 </p>
 {#each pboards as pboard, i}
 	<div>
+		<hr/>
 		<TileBoard {pboard} {cellSize} />
 		<PPBoard {pboard} />
 	</div>

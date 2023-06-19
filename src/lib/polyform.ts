@@ -562,7 +562,6 @@ function* genRecSolve(pboard: PBoard, pos: LPos, recLevel: number, yieldOnLaidTi
             const nextPos = placeTile(pboard, pos, idx)
             if (nextPos === null || recLevel >= yieldOnLaidTiles) {
                 const solution = _.cloneDeep(pboard)
-                console.log(`yielding solution ${recLevel} >= ${yieldOnLaidTiles}`)
                 yield solution
             } else {
                 yield* genRecSolve(pboard, nextPos, recLevel + 1, yieldOnLaidTiles)

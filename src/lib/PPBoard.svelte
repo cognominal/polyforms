@@ -91,7 +91,7 @@
 {#if DEBUG}
 	<div class="tilesinfo">
 		{#each pboard.laidTiles as ltile, i}
-			<div  on:click={()=> {showTile[i]= !showTile[i]}}     class={highlightClass(i)}>
+			<div  on:click={()=> {showTile[i]= !showTile[i]}}     class:highlight={highlightBool(i)}>
 				<input type="checkbox" bind:checked={showTile[i]} />
 
 				{debugInfos(ltile)}

@@ -39,8 +39,7 @@
 	function handleKey(evt: KeyboardEvent) {}
 </script>
 
-<!-- <span class="contained transmit-events" on:click={handleClick} on:keypress={handleKey} > -->
-<span class="contained transmit-events">
+<span class="contained transmit-events" on:click={handleClick} on:keypress={handleKey} >
 	<!-- Draw the grid proper	-->
 	<svg width={cw} height={ch} viewBox="0 0 {cw} {ch}" class="transmit-events">
 		{#each Array(h + 1) as _, i}
