@@ -52,9 +52,9 @@ export type TileInfo = { orients: Orient[]; name?: string }
 // A svelte component PPboard graphically represents a PBoard with laid and floating tiles.
 export type PBoard = {
     // associated svelte component : `PPBoard`
-    board: Int[][] // 0 =e empty, 1 = filled
+    board: Int[][] // 0 == empty, 1 == filled
     floatingTiles: FloatingTileInfo[]
-    laidTiles: laidTile[]
+    laidTiles: LaidTile[]
 
     // Associated svelte component : `TileBoard`
     // The tiles to be laid are in `tilesInfo`. For a tile at index `tileI`, the number of instances

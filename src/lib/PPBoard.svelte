@@ -10,7 +10,7 @@
 	export let pboard: PBoard;
 	import { dropzone } from '$lib/dnd';
 	import '$lib/global.css';
-	import LaidTile from './LaidTile.svelte';
+	import LaidTile from './CTile.svelte';
 
 	export let squareSize = 15;
 	let w = pboard.board[0].length * squareSize;
@@ -80,7 +80,7 @@
 
 		
 			>
-				<LaidTile {ltile} {squareSize} {pboard} />
+				<CTile {ltile} {squareSize} {pboard} />
 			</g>
 			{/if}
 		{/each}
@@ -97,7 +97,7 @@
 				{debugInfos(ltile)}
 				<svg width={w/4} height={h/4} viewBox="0 0 {w/4} {h/4}">
 					<g class="absolute" style="--posx:{0};--posy:{0} ">
-						<LaidTile {ltile} squareSize={squareSize/4} {pboard} />
+						<CTile {ltile} squareSize={squareSize/4} {pboard} />
 					</g>
 			</div>
 		{/each}
