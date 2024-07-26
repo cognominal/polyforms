@@ -2,6 +2,8 @@
 	import { page } from '$app/stores';
 	import logo from '$lib/images/svelte-logo.svg';
 	import github from '$lib/images/github.svg';
+	let mode = import.meta.env.MODE;
+
 </script>
 
 <header>
@@ -22,15 +24,17 @@
 			<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
 				<a href="/about">About</a>
 			</li>
-			<li aria-current={$page.url.pathname === '/Tests/Board' ? 'page' : undefined}>
-				<a href="/Tests/Board">test board</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/Tests/Solver' ? 'page' : undefined}>
-				<a href="/Tests/Solver">test solver</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/Tests/Tick`' ? 'page' : undefined}>
-				<a href="/Tests/Tick">test tick</a>
-			</li>
+			{#if mode == "development"}
+				<li aria-current={$page.url.pathname === '/Tests/Board' ? 'page' : undefined}>
+					<a href="/Tests/Board">test board</a>
+				</li>
+				<li aria-current={$page.url.pathname === '/Tests/Solver' ? 'page' : undefined}>
+					<a href="/Tests/Solver">test solver</a>
+				</li>
+				<li aria-current={$page.url.pathname === '/Tests/Tick`' ? 'page' : undefined}>
+					<a href="/Tests/Tick">test tick</a>
+				</li>
+			{/if}
 
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
