@@ -1,10 +1,10 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
-import autoImport from 'sveltekit-autoimport';
+// import autoImport from 'sveltekit-autoimport';
 
-autoImport({
-	components: { name: './src/lib', flat: true }
-  })
+// autoImport({
+// 	components: { name: './src/lib', flat: true }
+//   })
   
 export default defineConfig({
 	plugins: [sveltekit()],
